@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartpipenetwork/electronicmap/home_map.dart';
 import 'package:smartpipenetwork/systemsetting/system_setting.dart';
+import 'package:smartpipenetwork/workbench/patrol_task.dart';
 import 'package:smartpipenetwork/workbench/workbench.dart';
 
 class RootWidgetPage extends StatefulWidget {
@@ -24,7 +25,9 @@ class _RootWidgetPageState extends State<RootWidgetPage> {
     Icon(Icons.settings)
   ];
   /// 路由表
-  Map<String, WidgetBuilder> routes = {};
+  Map<String, WidgetBuilder> routes = {
+    'patorlTask':(context)=>PatrolTaskPage(),
+  };
 
   changeIndex(int index) {
     setState(() {
