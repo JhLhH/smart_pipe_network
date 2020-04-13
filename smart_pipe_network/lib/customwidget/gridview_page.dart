@@ -45,10 +45,10 @@ class _GridViewPageState extends State<GridViewPage> {
   Widget _getItemContainer(BuildContext context, String title, IconData icon) {
     return GestureDetector(
       onTap: () {
-        if(widget.routeNames != null && widget.routeNames[title] != null) {
+        if (widget.routeNames != null && widget.routeNames[title] != null) {
           print('当前点击$title Item');
-            Navigator.pushNamed(context, widget.routeNames[title]);
-        }else {
+          Navigator.pushNamed(context, widget.routeNames[title]);
+        } else {
           print('未查找到该路由');
         }
       },
@@ -62,9 +62,12 @@ class _GridViewPageState extends State<GridViewPage> {
               color: Colors.blue,
               size: 30.0,
             ),
-            Text(
-              title,
-              style: TextStyle(fontSize: 16, color: Colors.black),
+            Padding(
+              padding: EdgeInsets.only(top: 10),
+              child: Text(
+                title,
+                style: TextStyle(fontSize: 16, color: Colors.black),
+              ),
             ),
           ],
         ),
