@@ -22,7 +22,7 @@ class _WorkBenchPageState extends State<WorkBenchPage> {
           Container(
             height: 180,
             width: double.infinity,
-            child: Image(image: CachedNetworkImageProvider(headerImgUrl),
+            child: Image.asset('images/2.jpg',
               fit: BoxFit.fill,),
           ),
           GridViewPage(
