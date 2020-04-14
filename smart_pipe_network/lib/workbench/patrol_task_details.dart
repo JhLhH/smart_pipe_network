@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 /// 巡查任务未完成详情页面
 class PatrolTaskDetailsPage extends StatefulWidget {
+  // 导航栏标题传入
   final String title;
-
   PatrolTaskDetailsPage({this.title});
 
   @override
@@ -20,8 +20,8 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
       '任务状态：进行中',
       '备注：无'
     ];
-   bool _isTapStart = false;
-   bool _isTapEnd = false;
+   bool _isTapStart = false;// 控制按钮颜色和文字变化
+   bool _isTapEnd = false; // 控制按钮颜色和文字变化
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,14 +37,17 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
     );
   }
 
+  /// 获取listView的每一个item
   _getListItemBuilder(int index){
     if (index == 0){
+      // 顶部按钮
       return _getTopWidget();
     }else if(index == 1){
+      // 中间的内容
       return _getBodyWidget();
     }
-    return
-      GestureDetector(
+    // 点击按钮
+    return GestureDetector(
         onTap: (){
           // 病害上报
           print('病害上报点击');
@@ -108,7 +111,7 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
   }
 
 
-  /// body内容
+  /// 中间body内容
   _getBodyWidget(){
     return  Column(
       children: [
@@ -128,12 +131,18 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
     );
   }
 
+  /// 返回一个组件数组中间的body使用column布局这里返回职位children需要的[widget]
   _getBodyDetails(){
     List<Widget> widgetItems = [];
     items.forEach((text) {
+      // 统一添加样式一致的text
       widgetItems.add(_getBodyText(text));
     });
+
+    // 插入到第一位置一个灰色文字
     widgetItems.insert(0, _getBodyText('任务编号：RW20191102001',color: Colors.grey));
+
+    // 插入最后一行的可点击文字
     widgetItems.add(
       GestureDetector(
         onTap: (){
@@ -155,6 +164,7 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
     return widgetItems;
   }
 
+  /// 中间body每一行文字
   _getBodyText(String text,{Color color = Colors.black}){
    return Container(
       alignment: Alignment.centerLeft,
