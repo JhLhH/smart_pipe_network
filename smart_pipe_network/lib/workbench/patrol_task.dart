@@ -145,9 +145,11 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
         // TODO: implement tap push otherWidget
         print('进如详情页面');
         String title = item[0];
-        String replaceString = title.substring(0,10);
-        Navigator.of(context).push(MaterialPageRoute(builder: (context){
-          return PatrolTaskDetailsPage(title: title.replaceRange(0, 10, ''),);
+        String replaceString = title.substring(0, 10);
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return PatrolTaskDetailsPage(
+            title: title.replaceRange(0, 10, ''),
+          );
         }));
       },
       child: Stack(

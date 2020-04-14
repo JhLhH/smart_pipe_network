@@ -25,10 +25,11 @@ class _RootWidgetPageState extends State<RootWidgetPage> {
     Icon(Icons.dashboard),
     Icon(Icons.settings)
   ];
+
   /// 路由表
   Map<String, WidgetBuilder> routes = {
-    'patorlTask':(context)=>PatrolTaskPage(),
-    'PatrolTaskDetailsPage':(context)=>PatrolTaskDetailsPage(),
+    'patorlTask': (context) => PatrolTaskPage(),
+    'PatrolTaskDetailsPage': (context) => PatrolTaskDetailsPage(),
   };
 
   changeIndex(int index) {

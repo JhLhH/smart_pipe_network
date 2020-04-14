@@ -39,6 +39,7 @@ class _LoginPageState extends State<LoginPage> {
       return false;
     }
   }
+
   /// 提示
   void showCenterShortToast() {
     Fluttertoast.showToast(
@@ -104,10 +105,10 @@ class _LoginPageState extends State<LoginPage> {
   /// 获取按钮
   _getButton(String title, Color color) {
     return GestureDetector(
-      onTap: (){
-       if (_checkLoginInfo(context)){
-         runApp(RootWidgetPage());
-       }
+      onTap: () {
+        if (_checkLoginInfo(context)) {
+          runApp(RootWidgetPage());
+        }
       },
       child: Container(
         alignment: Alignment.center,
@@ -131,11 +132,13 @@ class _LoginPageState extends State<LoginPage> {
   _getUserNameTextField() {
     return Container(
       padding: EdgeInsets.only(top: 100),
-      margin: EdgeInsets.only(left: 40, right: 40,),
+      margin: EdgeInsets.only(
+        left: 40,
+        right: 40,
+      ),
       child: Container(
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.black,width: 1)
-        ),
+        decoration:
+            BoxDecoration(border: Border.all(color: Colors.black, width: 1)),
         child: TextField(
           controller: _userNameController,
           onChanged: (value) {
@@ -149,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
           decoration: InputDecoration(
               border: InputBorder.none, //去除下划线
               hintText: '输入账号',
-              hintStyle: TextStyle(fontSize: 15,color: Colors.grey),
+              hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
               prefixIcon: Icon(
                 Icons.person,
                 size: 30,
@@ -164,11 +167,13 @@ class _LoginPageState extends State<LoginPage> {
   _getPasswordTextField() {
     return Container(
         padding: EdgeInsets.only(top: 20),
-        margin: EdgeInsets.only(left: 40, right: 40,),
+        margin: EdgeInsets.only(
+          left: 40,
+          right: 40,
+        ),
         child: Container(
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black,width: 1)
-          ),
+          decoration:
+              BoxDecoration(border: Border.all(color: Colors.black, width: 1)),
           child: TextField(
             controller: _passwordController,
             onChanged: (value) {
@@ -177,19 +182,20 @@ class _LoginPageState extends State<LoginPage> {
               });
             },
             style: TextStyle(
-                fontSize: 15.0, color: Colors.black, fontWeight: FontWeight.w300),
+                fontSize: 15.0,
+                color: Colors.black,
+                fontWeight: FontWeight.w300),
             // 输入文本样式
             decoration: InputDecoration(
                 border: InputBorder.none, //去除下划线
                 hintText: '输入密码',
-                hintStyle: TextStyle(fontSize: 15,color: Colors.grey),
+                hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
                 prefixIcon: Icon(
                   Icons.lock_outline,
                   size: 30,
                   color: Colors.grey,
                 )),
           ),
-        )
-    );
+        ));
   }
 }

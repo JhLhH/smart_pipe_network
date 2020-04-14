@@ -8,10 +8,19 @@ class WorkBenchPage extends StatefulWidget {
 }
 
 class _WorkBenchPageState extends State<WorkBenchPage> {
-  final String headerImgUrl = 'http://pages.ctrip.com/commerce/promote/20180718/yxzy/img/640sygd.jpg';
+  final String headerImgUrl =
+      'http://pages.ctrip.com/commerce/promote/20180718/yxzy/img/640sygd.jpg';
   final List<String> titles = ['巡查任务', '病害工单', '流程审批', '汛情申报', '汛情上报', '汛情处理'];
-  final List<IconData> iconDatas = [Icons.border_all,Icons.border_all,Icons.edit,Icons.border_all,Icons.border_all,Icons.edit];
-  final routeNames = {'巡查任务':'patorlTask'};
+  final List<IconData> iconDatas = [
+    Icons.border_all,
+    Icons.border_all,
+    Icons.edit,
+    Icons.border_all,
+    Icons.border_all,
+    Icons.edit
+  ];
+  final routeNames = {'巡查任务': 'patorlTask'};
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,13 +33,13 @@ class _WorkBenchPageState extends State<WorkBenchPage> {
           Container(
             height: 180,
             width: double.infinity,
-            child: Image.asset('images/2.jpg',
-              fit: BoxFit.fill,),
+            child: Image.asset(
+              'images/2.jpg',
+              fit: BoxFit.fill,
+            ),
           ),
           GridViewPage(
-              titles: titles,
-              iconDatas: iconDatas,
-              routeNames: routeNames)
+              titles: titles, iconDatas: iconDatas, routeNames: routeNames)
         ],
       ),
     );
