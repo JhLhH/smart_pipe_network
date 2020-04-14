@@ -11,6 +11,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('系统设置'),
+        centerTitle: true,
       ),
       body: Center(
         child: Text('系统设置',style: TextStyle(color: Colors.blue,fontWeight: FontWeight.w400, fontSize: 18)),

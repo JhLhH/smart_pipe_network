@@ -17,6 +17,7 @@ class _WorkBenchPageState extends State<WorkBenchPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('工作台'),
+        centerTitle: true,
       ),
       body: Column(
         children: <Widget>[

@@ -110,6 +110,7 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
       backgroundColor: Color(0xFFf7f7f7),
       appBar: AppBar(
         title: Text('巡查任务'),
+        centerTitle: true,
         leading: BackButton(
           onPressed: () {
             Navigator.pop(context);
