@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+
 
 /// 巡查任务未完成详情页面
 class PatrolTaskDetailsPage extends StatefulWidget {
@@ -33,16 +36,16 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
       body: ListView.builder(
           itemCount: 3,
           itemBuilder: (BuildContext context, int index) {
-            return _getListItemBuilder(index);
+            return _getListItemBuilder(index, context);
           }),
     );
   }
 
   /// 获取listView的每一个item
-  _getListItemBuilder(int index) {
+  _getListItemBuilder(int index, BuildContext context) {
     if (index == 0) {
       // 顶部按钮
-      return _getTopWidget();
+      return _getTopWidget(context);
     } else if (index == 1) {
       // 中间的内容
       return _getBodyWidget();
@@ -54,7 +57,7 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
         print('病害上报点击');
       },
       child: Container(
-        margin: EdgeInsets.only(left: 20, right: 20, top: 40),
+        margin: EdgeInsets.only(left: 20, right: 20,),
         height: 49,
         alignment: Alignment.center,
         child: Text(
@@ -71,14 +74,17 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
   }
 
   /// 获取顶部两个按钮组件
-  _getTopWidget() {
+  _getTopWidget(BuildContext context) {
+
     return Container(
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _getTopButton(0, _isTapStart ? '正在巡查' : '开始巡查',
-              _isTapStart ? Colors.lightBlueAccent : Colors.greenAccent),
+              _isTapStart ? Colors.lightBlueAccent : Colors.greenAccent, context),
           _getTopButton(1, _isTapEnd ? '已完成' : '完成结束',
-              _isTapEnd ? Colors.grey : Colors.redAccent),
+              _isTapEnd ? Colors.grey : Colors.redAccent, context),
         ],
       ),
     );
@@ -89,9 +95,10 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
   /// index 0代表开始巡查 1代表完成结束按钮
   /// text 需要展示的文字
   /// color 背景颜色
-  _getTopButton(int index, String text, Color color) {
+  _getTopButton(int index, String text, Color color, BuildContext context) {
+
     return Container(
-      padding: EdgeInsets.all(50),
+      padding: EdgeInsets.only(top: 50,bottom: 50),
       child: GestureDetector(
         onTap: () {
           setState(() {
