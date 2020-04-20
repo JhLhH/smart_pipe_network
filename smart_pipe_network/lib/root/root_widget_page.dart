@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartpipenetwork/electronicmap/home_map.dart';
 import 'package:smartpipenetwork/systemsetting/system_setting.dart';
+import 'package:smartpipenetwork/workbench/disease_report.dart';
 import 'package:smartpipenetwork/workbench/patrol_task.dart';
 import 'package:smartpipenetwork/workbench/patrol_task_details.dart';
 import 'package:smartpipenetwork/workbench/workbench.dart';
@@ -30,6 +31,7 @@ class _RootWidgetPageState extends State<RootWidgetPage> {
   Map<String, WidgetBuilder> routes = {
     'patorlTask': (context) => PatrolTaskPage(),
     'PatrolTaskDetailsPage': (context) => PatrolTaskDetailsPage(),
+    'DiseaseReportPage': (context) => DiseaseReportPage(),
   };
 
   changeIndex(int index) {

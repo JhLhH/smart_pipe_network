@@ -150,7 +150,8 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
           return PatrolTaskDetailsPage(
             title: title.replaceRange(0, 10, ''),
           );
-        }));
+        })
+        );
       },
       child: Stack(
         alignment: Alignment.centerRight,

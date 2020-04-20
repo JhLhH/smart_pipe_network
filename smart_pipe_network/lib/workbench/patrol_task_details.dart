@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
+import 'disease_report.dart';
 
 /// 巡查任务未完成详情页面
 class PatrolTaskDetailsPage extends StatefulWidget {
@@ -55,6 +55,13 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
       onTap: () {
         // 病害上报
         print('病害上报点击');
+        Navigator.pushNamed(context, 'DiseaseReportPage');
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return DiseaseReportPage(
+            taskNum: 'RW20191102001',
+          );
+        })
+        );
       },
       child: Container(
         margin: EdgeInsets.only(left: 20, right: 20,),
