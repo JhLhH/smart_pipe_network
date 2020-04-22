@@ -17,6 +17,7 @@ class PhotosGridView extends StatefulWidget {
 class _PhotosGridViewState extends State<PhotosGridView> {
   final List<String> sheetTitles = ['拍照','从手机相机选择','取消'];
   List _images;
+  var _image;
   @override
   Widget build(BuildContext context) {
     return GridView.count(
@@ -28,8 +29,19 @@ class _PhotosGridViewState extends State<PhotosGridView> {
     );
   }
 
+  /// 自动换行的布局每张图片都可以添加
   List<Widget> _getWidgetList(BuildContext context) {
     List<Widget> items = [];
+    if (_image != null) {
+      if(_images == null){
+        _images = [];
+      }
+      if (!_images.contains(_image)) {
+        _images.add(_image);
+        _image = null;
+      }
+    }
+
     if (widget.photosType == PhotosType.edit) {
       items.add(_getDefaultListItem(context));
     }
@@ -40,7 +52,7 @@ class _PhotosGridViewState extends State<PhotosGridView> {
    }
     return items;
   }
-
+  /// 添加大+按钮
   _getDefaultListItem(BuildContext context) {
     return GestureDetector(
       onTap: () {
@@ -65,6 +77,7 @@ class _PhotosGridViewState extends State<PhotosGridView> {
     );
   }
 
+  /// 返回的照片展示的widget
   Widget _getItemContainer(BuildContext context, image) {
     return GestureDetector(
       onTap: () {
@@ -72,13 +85,29 @@ class _PhotosGridViewState extends State<PhotosGridView> {
       },
       child: Stack(
         children: [
-//          Image.file(image),
-          Container(color: Colors.redAccent,),
+          Container(
+            margin: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 1),
+                borderRadius: BorderRadius.circular(8)),
+            alignment: Alignment.center,
+            child: Image.file(image,),
+          ),
+          Positioned(
+            right: 0,
+            top: 0,
+            child: IconButton(icon: Icon(Icons.clear,size: 20,), onPressed: (){
+              setState(() {
+                _images.remove(image);
+              });
+            }),
+          )
         ],
       ),
     );
   }
 
+  /// 底部弹框
   Widget _bottomSheetBody(BuildContext context) {
     return Container(
       height: 140.0,
@@ -89,7 +118,7 @@ class _PhotosGridViewState extends State<PhotosGridView> {
         })
     );
   }
-
+  /// 底部弹框的每一行widget
   _getAlertSheetItem(BuildContext context, int index,) {
     double width = MediaQuery.of(context).size.width;
     return RaisedButton(onPressed: (){
@@ -108,11 +137,12 @@ class _PhotosGridViewState extends State<PhotosGridView> {
     );
   }
 
+  /// 获取图片相机/相册
   Future getImage(ImageSource source) async{
     var image = await ImagePicker.pickImage(source: source);
     setState(() {
       Navigator.pop(context);
-      _images.add(image);
+      _image = image;
     });
   }
 
