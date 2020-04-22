@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:image_picker/image_picker.dart';
+import 'package:smartpipenetwork/customwidget/photos_gridview.dart';
 /// 巡查任务未完成详情页面
 class DiseaseReportPage extends StatefulWidget {
   // 导航栏标题传入
@@ -23,6 +24,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     '病害位置：',
     '原因分析：',
     '整修措施：',
+    '上传图片：'
   ];
 
   List<String> hintTexts = [
@@ -41,7 +43,6 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     hintTexts.insert(0, widget.taskNum);
   }
@@ -49,7 +50,10 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    print('高度$height');
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('病害上报'),
         centerTitle: true,
@@ -59,29 +63,92 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
           onTap: () {
             FocusScope.of(context).requestFocus(FocusNode());
           },
-          child: SafeArea(
-              child: Stack(
+          child:  Stack(
             children: [
-              ListView.builder(
-                  itemCount: prefixTitles.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return _getListViewBuilderItems(context, index);
-                  }),
+              Container(
+                width: width,
+                height: height,
+                color: Colors.white,
+              ),
               Positioned(
-                  bottom: height - 49,
+                  left: 0,right: 0,top: 0,bottom: 70,
                   child: Container(
-                    height: 49,
-                    color: Colors.red,
-                  ))
+                  child: ListView.builder(
+                    itemCount: prefixTitles.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return _getListViewBuilderItems(context, index);
+                    }),
+              )),
+              Positioned(
+                  bottom: 0,
+                  width: width,
+                  height: 70,
+                  child: Column(
+                    children: [
+                      Container(color: Colors.grey,height: 10,),
+                      Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0),child: _getBottomWidget(context),)
+                    ],
+                  )
+              )
             ],
-          ))),
+          )),
+    );
+  }
+
+  /// 获取底部按钮
+  _getBottomWidget(BuildContext context){
+    double width = MediaQuery.of(context).size.width;
+    return  Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          GestureDetector(onTap: (){
+
+          },
+            child: Container(
+              height: 40,
+              width: width/2-50,
+              alignment: Alignment.center,
+              child: Text('取消'),
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey,width: 1),
+                  borderRadius: BorderRadius.circular(8)
+              ),
+            ),
+          ),GestureDetector(onTap: (){
+
+          },
+            child: Container(
+              height: 40,
+              width: width/2-50,
+              alignment: Alignment.center,
+              child: Text('提交',style: TextStyle(color: Colors.white),),
+              decoration: BoxDecoration(
+                  color: Colors.blue,
+                  border: Border.all(color: Colors.grey,width: 1),
+                  borderRadius: BorderRadius.circular(8)
+              ),
+            ),
+          ),
+        ],
     );
   }
 
   _getListViewBuilderItems(BuildContext context, int index) {
+    if (index == 10){
+      return Column(
+        children: [
+          Container(padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+          alignment: Alignment.centerLeft,
+          child: Text(prefixTitles[index],),
+          ),
+          PhotosGridView(),
+        ],
+      );
+    }
     return _getNormalListViewItem(context, index);
   }
 
+  /// 获取每一行的widget
   _getNormalListViewItem(BuildContext context, int index) {
     return Padding(
       padding: EdgeInsets.only(top: 10, left: 10, right: 10),
