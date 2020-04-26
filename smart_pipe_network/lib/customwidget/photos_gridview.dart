@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+
 enum PhotosType { edit, show }
 
 // ignore: must_be_immutable
@@ -11,21 +12,30 @@ class PhotosGridView extends StatefulWidget {
   PhotosGridView({this.imageUrls, this.photosType = PhotosType.edit});
 
   @override
-  _PhotosGridViewState createState() => _PhotosGridViewState();
+  PhotosGridViewState createState() => PhotosGridViewState();
 }
 
-class _PhotosGridViewState extends State<PhotosGridView> {
-  final List<String> sheetTitles = ['拍照','从手机相机选择','取消'];
-  List _images;
+class PhotosGridViewState extends State<PhotosGridView> {
+  final List<String> sheetTitles = ['拍照', '从手机相机选择', '取消'];
+  List images;
   var _image;
+
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      shrinkWrap: true,
-      crossAxisCount: 3,
-      crossAxisSpacing: 5.0,
-      mainAxisSpacing: 5.0,
-      children: _getWidgetList(context),
+    return Column(
+      children: [
+        GridView.count(
+          shrinkWrap: true,
+          crossAxisCount: 3,
+          crossAxisSpacing: 5.0,
+          mainAxisSpacing: 5.0,
+          children: _getWidgetList(context),
+        ),
+        Container(
+          height: 1,
+          color: Color(0xffF0EEF9),
+        )
+      ],
     );
   }
 
@@ -33,11 +43,11 @@ class _PhotosGridViewState extends State<PhotosGridView> {
   List<Widget> _getWidgetList(BuildContext context) {
     List<Widget> items = [];
     if (_image != null) {
-      if(_images == null){
-        _images = [];
+      if (images == null) {
+        images = [];
       }
-      if (!_images.contains(_image)) {
-        _images.add(_image);
+      if (!images.contains(_image)) {
+        images.add(_image);
         _image = null;
       }
     }
@@ -45,13 +55,14 @@ class _PhotosGridViewState extends State<PhotosGridView> {
     if (widget.photosType == PhotosType.edit) {
       items.add(_getDefaultListItem(context));
     }
-   if(_images != null){
-     _images.forEach((image) {
-       items.add(_getItemContainer(context, image));
-     });
-   }
+    if (images != null) {
+      images.forEach((image) {
+        items.add(_getItemContainer(context, image));
+      });
+    }
     return items;
   }
+
   /// 添加大+按钮
   _getDefaultListItem(BuildContext context) {
     return GestureDetector(
@@ -91,16 +102,23 @@ class _PhotosGridViewState extends State<PhotosGridView> {
                 border: Border.all(color: Colors.grey, width: 1),
                 borderRadius: BorderRadius.circular(8)),
             alignment: Alignment.center,
-            child: Image.file(image,),
+            child: Image.file(
+              image,
+            ),
           ),
           Positioned(
             right: 0,
             top: 0,
-            child: IconButton(icon: Icon(Icons.clear,size: 20,), onPressed: (){
-              setState(() {
-                _images.remove(image);
-              });
-            }),
+            child: IconButton(
+                icon: Icon(
+                  Icons.clear,
+                  size: 20,
+                ),
+                onPressed: () {
+                  setState(() {
+                    images.remove(image);
+                  });
+                }),
           )
         ],
       ),
@@ -110,40 +128,45 @@ class _PhotosGridViewState extends State<PhotosGridView> {
   /// 底部弹框
   Widget _bottomSheetBody(BuildContext context) {
     return Container(
-      height: 140.0,
-      margin: EdgeInsets.all(10),
-      child:
-        ListView.builder(physics: NeverScrollableScrollPhysics(),itemCount: 3,itemBuilder: (BuildContext context, int index){
-          return _getAlertSheetItem(context, index);
-        })
-    );
+        height: 140.0,
+        margin: EdgeInsets.all(10),
+        child: ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: 3,
+            itemBuilder: (BuildContext context, int index) {
+              return _getAlertSheetItem(context, index);
+            }));
   }
+
   /// 底部弹框的每一行widget
-  _getAlertSheetItem(BuildContext context, int index,) {
+  _getAlertSheetItem(
+    BuildContext context,
+    int index,
+  ) {
     double width = MediaQuery.of(context).size.width;
-    return RaisedButton(onPressed: (){
-      if (index == 2) {
+    return RaisedButton(
+      onPressed: () {
+        if (index == 2) {
           Navigator.pop(context);
         }
-        if(index == 1){
+        if (index == 1) {
           // 打开相册
           getImage(ImageSource.gallery);
-        }else if(index == 0){
+        } else if (index == 0) {
           // 打开相机
           getImage(ImageSource.camera);
         }
-    },
-    child: Text(sheetTitles[index]),
+      },
+      child: Text(sheetTitles[index]),
     );
   }
 
   /// 获取图片相机/相册
-  Future getImage(ImageSource source) async{
+  Future getImage(ImageSource source) async {
     var image = await ImagePicker.pickImage(source: source);
     setState(() {
       Navigator.pop(context);
       _image = image;
     });
   }
-
 }

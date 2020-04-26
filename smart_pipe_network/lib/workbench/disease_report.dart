@@ -1,11 +1,12 @@
+
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:smartpipenetwork/customwidget/photos_gridview.dart';
 /// 巡查任务未完成详情页面
 class DiseaseReportPage extends StatefulWidget {
-  // 导航栏标题传入
+  // 导航栏标题传入上个界面传入
   final String taskNum;
-
+  // 构造方法必须写，在_DiseaseReportPageState中使用方式widget.taskNum
   DiseaseReportPage({this.taskNum});
 
   @override
@@ -13,6 +14,7 @@ class DiseaseReportPage extends StatefulWidget {
 }
 
 class _DiseaseReportPageState extends State<DiseaseReportPage> {
+  /// 病害上报输入框左侧固定文字
   final List<String> prefixTitles = [
     '任务名称：',
     '巡查人员：',
@@ -27,6 +29,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     '上传图片：'
   ];
 
+  /// 占位文字
   List<String> hintTexts = [
     '请输入巡查人员姓名',
     '请选择时间',
@@ -38,12 +41,58 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     '请输入原因',
     '请输入整修措施',
   ];
+  /// 新增病害存放记录输入框文字内容
+  Map<String,TextEditingController> controllerMaps= {
+    '请输入巡查人员姓名':TextEditingController(),
+    '请选择时间':TextEditingController(),
+    '请选择所属片区':TextEditingController(),
+    '请选择巡查路段':TextEditingController(),
+    '请选择病害种类':TextEditingController(),
+    '请输入病害数量':TextEditingController(),
+    '点击图标可自动获取定位':TextEditingController(),
+    '请输入原因':TextEditingController(),
+    '请输入整修措施':TextEditingController(),
+  };
 
-//  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  /// 新增病害输入框左侧固定文字
+  final List<String> newPrefixTitles = [
+    '病害种类：',
+    '病害数量：',
+    '病害位置：',
+    '原因分析：',
+    '整修措施：',
+    '上传图片：'
+  ];
+  /// 新增病害对应输入框占位文字
+  List<String> newHintTexts = [
+    '请输入巡查人员姓名',
+    '请选择时间',
+    '请选择所属片区',
+    '请选择巡查路段',
+    '请选择病害种类',
+    '请输入病害数量',
+    '点击图标可自动获取定位',
+    '请输入原因',
+    '请输入整修措施',
+  ];
 
+  Map<String,TextEditingController> newControllerMaps= {
+    '请选择病害种类':TextEditingController(),
+    '请输入病害数量':TextEditingController(),
+    '点击图标可自动获取定位':TextEditingController(),
+    '请输入原因':TextEditingController(),
+    '请输入整修措施':TextEditingController(),
+  };
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<PhotosGridViewState> _photoKey = GlobalKey<PhotosGridViewState>();
+  bool _isAdd = false;
   @override
   void initState() {
     super.initState();
+    TextEditingController controller = TextEditingController();
+    controller.text = widget.taskNum;
+    controllerMaps.addAll({'任务名称':controller});
     hintTexts.insert(0, widget.taskNum);
   }
 
@@ -51,12 +100,16 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    print('高度$height');
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('病害上报'),
         centerTitle: true,
+        leading: BackButton(
+          onPressed: (){
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: GestureDetector(
           behavior: HitTestBehavior.translucent,
@@ -73,19 +126,23 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
               Positioned(
                   left: 0,right: 0,top: 0,bottom: 70,
                   child: Container(
-                  child: ListView.builder(
-                    itemCount: prefixTitles.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return _getListViewBuilderItems(context, index);
-                    }),
-              )),
-              Positioned(
+                  child: Form(
+                    key: _formKey,
+                    child: ListView.builder(
+                        itemCount:_isAdd ?  prefixTitles.length + newPrefixTitles.length : prefixTitles.length+1,
+                        itemBuilder: (BuildContext context, int index) {
+                          return _getListViewBuilderItems(context, index);
+                        }),
+                  ),
+              )
+              ),
+              Positioned (
                   bottom: 0,
                   width: width,
                   height: 70,
                   child: Column(
                     children: [
-                      Container(color: Colors.grey,height: 10,),
+                      Container(color: Color(0xffF0EEF9),height: 10,),
                       Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0),child: _getBottomWidget(context),)
                     ],
                   )
@@ -97,86 +154,171 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
 
   /// 获取底部按钮
   _getBottomWidget(BuildContext context){
-    double width = MediaQuery.of(context).size.width;
-    return  Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          GestureDetector(onTap: (){
-
-          },
-            child: Container(
-              height: 40,
-              width: width/2-50,
-              alignment: Alignment.center,
-              child: Text('取消'),
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey,width: 1),
-                  borderRadius: BorderRadius.circular(8)
-              ),
-            ),
-          ),GestureDetector(onTap: (){
-
-          },
-            child: Container(
-              height: 40,
-              width: width/2-50,
-              alignment: Alignment.center,
-              child: Text('提交',style: TextStyle(color: Colors.white),),
-              decoration: BoxDecoration(
-                  color: Colors.blue,
-                  border: Border.all(color: Colors.grey,width: 1),
-                  borderRadius: BorderRadius.circular(8)
-              ),
-            ),
-          ),
-        ],
+    return  GestureDetector(onTap: (){
+        // 统一校验
+      if(_formKey.currentState.validate()){
+        // 校验通过后可以遍历controllerMaps中的value，
+        // 他的值是controller中的text就是存放的目标字符串
+        // _photoKey.currentState.images存放选择的图片
+       if(_photoKey.currentState.images.isEmpty){
+         Fluttertoast.showToast(msg: '缺少图片');
+       }
+      }
+    },
+      child: Container(
+        height: 49,
+        margin: EdgeInsets.only(left: 10,right: 10),
+        alignment: Alignment.center,
+        child: Text('提交',style: TextStyle(color: Colors.white),),
+        decoration: BoxDecoration(
+            color: Colors.blue,
+            border: Border.all(color: Colors.grey,width: 1),
+            borderRadius: BorderRadius.circular(8)
+        ),
+      ),
     );
   }
 
+
   _getListViewBuilderItems(BuildContext context, int index) {
-    if (index == 10){
-      return Column(
-        children: [
-          Container(padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-          alignment: Alignment.centerLeft,
-          child: Text(prefixTitles[index],),
-          ),
-          PhotosGridView(),
-        ],
-      );
+    if(!_isAdd){
+      if (index == 10){
+        return Column(
+          children: [
+            Container(padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+              alignment: Alignment.centerLeft,
+              child: Text(prefixTitles[index],),
+            ),
+            PhotosGridView(),
+          ],
+        );
+      }if(index == 11){
+          return GestureDetector(
+            onTap: (){
+//              setState(() {
+//                _isAdd = true;
+//              });
+            },
+              child:Column(
+                children: [
+                  Container(
+                    height: 70,
+                    alignment: Alignment.center,
+                    child:  Text('新增病害', style: TextStyle(color: Colors.blue,fontSize: 18),),
+                  ),
+                  Container(
+                    height: 1,
+                    color: Color(0xffF0EEF9),
+                  )
+                ],
+              )
+          );
+      }
+      String hintText = hintTexts[index];
+      String prefixText = prefixTitles[index];
+      TextEditingController controller = controllerMaps[hintText];
+      return _getNormalListViewItem(context, index, controller, hintText, prefixText);
+    }else{
+      if(index < 10){
+        if (index == 10){
+          return Column(
+            children: [
+              Container(padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                alignment: Alignment.centerLeft,
+                child: Text(prefixTitles[index],),
+              ),
+              PhotosGridView(),
+            ],
+          );
+        }
+        String hintText = hintTexts[index];
+        String prefixText = prefixTitles[index];
+        TextEditingController controller = controllerMaps[hintText];
+        return _getNormalListViewItem(context, index, controller, hintText, prefixText);
+      }
+      else{
+        if (index == 5){
+          return Column(
+            children: [
+              Container(padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                alignment: Alignment.centerLeft,
+                child: Text(prefixTitles[index],),
+              ),
+              PhotosGridView(),
+            ],
+          );
+        }
+        String hintText = newHintTexts[index];
+        String prefixText = newPrefixTitles[index];
+        TextEditingController controller = newControllerMaps[hintText];
+        return _getNormalListViewItem(context, index, controller, hintText, prefixText);
+      }
     }
-    return _getNormalListViewItem(context, index);
+
+  }
+
+  /// 控制哪一个输入框可以输入
+ bool _getNormalListViewItemEnabled(int index){
+    if(index == 0 ||index == 2 ||index == 3 ||index == 4 ||index == 5 || index == 7){
+      return false;
+    }
+    return true;
   }
 
   /// 获取每一行的widget
-  _getNormalListViewItem(BuildContext context, int index) {
+  _getNormalListViewItem(BuildContext context, int index,TextEditingController controller,
+      String hintText, String prefixText) {
+      return Stack(
+        alignment: Alignment.center ,
+        children: [
+          _getTextFieldItem(context, index, controller, hintText, prefixText),
+          Positioned(
+            right: 5,
+            child: Center(child: _getRightIconButton(context, index),),)
+        ],
+      );
+  }
+
+  /// 获取输入框组件
+  _getTextFieldItem(BuildContext context , int index,TextEditingController controller,
+      String hintText, String prefixText){
     return Padding(
       padding: EdgeInsets.only(top: 10, left: 10, right: 10),
       child: TextFormField(
-        enabled: index == 0? false:true,
+        controller: controller,
+        enabled: _getNormalListViewItemEnabled(index),
         textAlign: TextAlign.right,
         decoration: InputDecoration(
-          hintText: hintTexts[index],
+          hintText: hintText,
           prefixIcon: Container(
             width: 80,
             alignment: Alignment.center,
             child: Text(
-              prefixTitles[index],
+              prefixText,
             ),
           ),
-          suffixIcon: _getRightIconButton(context, index),
-          enabledBorder: new UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey),
+          suffixIcon: Text(''),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xffF0EEF9)),
           ),
-          focusedBorder: new UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xffF0EEF9)),
+          ),
+          disabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xffF0EEF9)),
           ),
         ),
         validator: (value) {
           if (value.isEmpty) {
-            return hintTexts[index];
+            return hintText;
           }
           return null;
+        },
+        onChanged: (value){
+        },
+        onTap: (){
+          print('点击了第$index个输入框');
+
         },
       ),
     );
@@ -195,16 +337,44 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
           ),
           onPressed: () {
             // 定位按钮
+            setState(() {
+              controllerMaps[hintTexts[index]].text = '坐标位置定位';
+            });
           });
     } else {
-      return IconButton(
-          icon: Icon(
-            Icons.keyboard_arrow_down,
-            color: Colors.grey,
-          ),
-          onPressed: () {
-            // 下拉框根据index来判断是哪一个
-          });
+      List<String> listData = ['选择1','选择2','选择3','选择4','选择5','选择6','选择7'];
+      return DropdownButtonHideUnderline(
+        child: DropdownButton(
+          // 这里选择菜单的下拉框内容根据index传入对应的内容需要一个数组listData
+          items: dropdownItems(listData),
+          onChanged: (value){
+            // 按钮菜单选择回调
+            print('点击了$value');
+            setState(() {
+              controllerMaps[hintTexts[index]].text = value;
+            });
+            // 需要显示在对应的输入框中显示选择的内容
+          },
+        ),
+      );
     }
   }
+
+  dropdownItems(List dropdownData) {
+    List<DropdownMenuItem<String>> list = new List();
+    dropdownData.forEach((value) {
+      list.add(
+        new DropdownMenuItem(
+            child: new Container(
+              color: Colors.white,
+              child: new Text(value, style: TextStyle(color: Colors.black),),
+            ), value: value
+        ),
+      );
+    });
+    return list;
+  }
+
 }
+
+

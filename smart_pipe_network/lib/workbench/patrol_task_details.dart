@@ -32,6 +32,11 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
       appBar: AppBar(
         title: Text(widget.title),
         centerTitle: true,
+        leading: BackButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: ListView.builder(
           itemCount: 3,
@@ -53,9 +58,7 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
     // 点击按钮
     return GestureDetector(
       onTap: () {
-        // 病害上报
-        print('病害上报点击');
-        Navigator.pushNamed(context, 'DiseaseReportPage');
+        // 病害上报路由跳转DiseaseReportPage中需要先声明变量taskNum
         Navigator.of(context).push(MaterialPageRoute(builder: (context) {
           return DiseaseReportPage(
             taskNum: 'RW20191102001',
