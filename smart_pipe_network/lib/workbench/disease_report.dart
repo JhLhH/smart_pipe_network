@@ -40,6 +40,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     '点击图标可自动获取定位',
     '请输入原因',
     '请输入整修措施',
+    '',
   ];
   /// 新增病害存放记录输入框文字内容
   Map<String,TextEditingController> controllerMaps= {
@@ -65,15 +66,12 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
   ];
   /// 新增病害对应输入框占位文字
   List<String> newHintTexts = [
-    '请输入巡查人员姓名',
-    '请选择时间',
-    '请选择所属片区',
-    '请选择巡查路段',
     '请选择病害种类',
     '请输入病害数量',
     '点击图标可自动获取定位',
     '请输入原因',
     '请输入整修措施',
+    '',
   ];
 
   Map<String,TextEditingController> newControllerMaps= {
@@ -84,12 +82,13 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     '请输入整修措施':TextEditingController(),
   };
 
+  // 统一验证输入框内容
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  // 获取选择得到的照片
   final GlobalKey<PhotosGridViewState> _photoKey = GlobalKey<PhotosGridViewState>();
   bool _isAdd = false;
-  @override
-  void initState() {
-    super.initState();
+
+  _createData(){
     TextEditingController controller = TextEditingController();
     controller.text = widget.taskNum;
     controllerMaps.addAll({'任务名称':controller});
@@ -100,6 +99,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    _createData();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -129,7 +129,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
                   child: Form(
                     key: _formKey,
                     child: ListView.builder(
-                        itemCount:_isAdd ?  prefixTitles.length + newPrefixTitles.length : prefixTitles.length+1,
+                        itemCount: _isAdd ? 17 :12,
                         itemBuilder: (BuildContext context, int index) {
                           return _getListViewBuilderItems(context, index);
                         }),
@@ -139,7 +139,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
               Positioned (
                   bottom: 0,
                   width: width,
-                  height: 70,
+                  height: 90,
                   child: Column(
                     children: [
                       Container(color: Color(0xffF0EEF9),height: 10,),
@@ -152,17 +152,106 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     );
   }
 
+
+  /// 没有点击新增的样式
+  _normalListBuilderItems(BuildContext context, int index){
+    if (index == 10){
+      return Column(
+        children: [
+          Container(padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+            alignment: Alignment.centerLeft,
+            child: Text(prefixTitles[index],),
+          ),
+          PhotosGridView(),
+        ],
+      );
+    }if(index == 11){
+      return GestureDetector(
+          onTap: (){
+            setState(() {
+              _isAdd = true;
+            });
+          },
+          child:Column(
+            children: [
+              Container(
+                height: 70,
+                alignment: Alignment.center,
+                child:  Text('新增病害', style: TextStyle(color: Colors.blue,fontSize: 18),),
+              ),
+              Container(
+                height: 1,
+                color: Color(0xffF0EEF9),
+              )
+            ],
+          )
+      );
+    }
+    String hintText = hintTexts[index];
+    String prefixText = prefixTitles[index];
+    TextEditingController controller = controllerMaps[hintText];
+    return _getNormalListViewItem(context, index, controller, hintText, prefixText);
+  }
+
+  /// 点击了新增的样式
+  _addListBuilderItems(BuildContext context, int index){
+    if(index < 11){
+      String hintText = hintTexts[index];
+      String prefixText = prefixTitles[index];
+      TextEditingController controller = controllerMaps[hintText];
+      if (index == 10){
+        return Column(
+          children: [
+            Container(padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+              alignment: Alignment.centerLeft,
+              child: Text(prefixText,),
+            ),
+            PhotosGridView(),
+          ],
+        );
+      }
+      return _getNormalListViewItem(context, index, controller, hintText, prefixText);
+    }
+    else{
+      String hintText = newHintTexts[index-11];
+      String prefixText = newPrefixTitles[index-11];
+      TextEditingController controller = newControllerMaps[hintText];
+      if (index == 16){
+        return Column(
+          children: [
+            Container(padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+              alignment: Alignment.centerLeft,
+              child: Text(prefixText,),
+            ),
+            PhotosGridView(),
+          ],
+        );
+      }
+      return _getNormalListViewItem(context, index, controller, hintText, prefixText);
+    }
+  }
+
+  /// 获取ListView
+  _getListViewBuilderItems(BuildContext context, int index) {
+    if(!_isAdd){
+     return _normalListBuilderItems(context, index);
+    }else{
+     return _addListBuilderItems(context, index);
+    }
+
+  }
+
   /// 获取底部按钮
   _getBottomWidget(BuildContext context){
     return  GestureDetector(onTap: (){
-        // 统一校验
+      // 统一校验
       if(_formKey.currentState.validate()){
         // 校验通过后可以遍历controllerMaps中的value，
         // 他的值是controller中的text就是存放的目标字符串
         // _photoKey.currentState.images存放选择的图片
-       if(_photoKey.currentState.images.isEmpty){
-         Fluttertoast.showToast(msg: '缺少图片');
-       }
+        if(_photoKey.currentState.images.isEmpty){
+          Fluttertoast.showToast(msg: '缺少图片');
+        }
       }
     },
       child: Container(
@@ -180,86 +269,9 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
   }
 
 
-  _getListViewBuilderItems(BuildContext context, int index) {
-    if(!_isAdd){
-      if (index == 10){
-        return Column(
-          children: [
-            Container(padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-              alignment: Alignment.centerLeft,
-              child: Text(prefixTitles[index],),
-            ),
-            PhotosGridView(),
-          ],
-        );
-      }if(index == 11){
-          return GestureDetector(
-            onTap: (){
-//              setState(() {
-//                _isAdd = true;
-//              });
-            },
-              child:Column(
-                children: [
-                  Container(
-                    height: 70,
-                    alignment: Alignment.center,
-                    child:  Text('新增病害', style: TextStyle(color: Colors.blue,fontSize: 18),),
-                  ),
-                  Container(
-                    height: 1,
-                    color: Color(0xffF0EEF9),
-                  )
-                ],
-              )
-          );
-      }
-      String hintText = hintTexts[index];
-      String prefixText = prefixTitles[index];
-      TextEditingController controller = controllerMaps[hintText];
-      return _getNormalListViewItem(context, index, controller, hintText, prefixText);
-    }else{
-      if(index < 10){
-        if (index == 10){
-          return Column(
-            children: [
-              Container(padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                alignment: Alignment.centerLeft,
-                child: Text(prefixTitles[index],),
-              ),
-              PhotosGridView(),
-            ],
-          );
-        }
-        String hintText = hintTexts[index];
-        String prefixText = prefixTitles[index];
-        TextEditingController controller = controllerMaps[hintText];
-        return _getNormalListViewItem(context, index, controller, hintText, prefixText);
-      }
-      else{
-        if (index == 5){
-          return Column(
-            children: [
-              Container(padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                alignment: Alignment.centerLeft,
-                child: Text(prefixTitles[index],),
-              ),
-              PhotosGridView(),
-            ],
-          );
-        }
-        String hintText = newHintTexts[index];
-        String prefixText = newPrefixTitles[index];
-        TextEditingController controller = newControllerMaps[hintText];
-        return _getNormalListViewItem(context, index, controller, hintText, prefixText);
-      }
-    }
-
-  }
-
   /// 控制哪一个输入框可以输入
  bool _getNormalListViewItemEnabled(int index){
-    if(index == 0 ||index == 2 ||index == 3 ||index == 4 ||index == 5 || index == 7){
+    if(index == 0 ||index == 2 ||index == 3 ||index == 4 ||index == 5 || index == 7 || index == 13){
       return false;
     }
     return true;
@@ -326,22 +338,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
 
   /// 右侧按钮
   _getRightIconButton(BuildContext context, int index) {
-    if (index == 0 || index == 1 || index == 6 || index == 8 || index == 9) {
-      return Text('');
-    } else if (index == 7) {
-      // 定位
-      return IconButton(
-          icon: Icon(
-            Icons.room,
-            color: Colors.blue,
-          ),
-          onPressed: () {
-            // 定位按钮
-            setState(() {
-              controllerMaps[hintTexts[index]].text = '坐标位置定位';
-            });
-          });
-    } else {
+    if(index == 2 || index == 3 || index == 4 || index == 5){
       List<String> listData = ['选择1','选择2','选择3','选择4','选择5','选择6','选择7'];
       return DropdownButtonHideUnderline(
         child: DropdownButton(
@@ -357,6 +354,21 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
           },
         ),
       );
+    } else if (index == 7 || index == 13) {
+      // 定位
+      return IconButton(
+          icon: Icon(
+            Icons.room,
+            color: Colors.blue,
+          ),
+          onPressed: () {
+            // 定位按钮
+            setState(() {
+              controllerMaps[hintTexts[index]].text = '坐标位置定位';
+            });
+          });
+    } else{
+      return Text('');
     }
   }
 
