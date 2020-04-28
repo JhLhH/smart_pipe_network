@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tableview/tableview.dart';
 
 import 'disease_report.dart';
@@ -118,6 +119,7 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
       return GestureDetector(
         onTap: () {
           print('巡查路径点击');
+          Fluttertoast.showToast(msg: '巡查路径点击');
         },
         child: Container(
           alignment: Alignment.centerLeft,
