@@ -47,12 +47,12 @@ class _DiseaseDetailsPageState extends State<DiseaseDetailsPage> {
           },
         ),
       ),
-      body: SafeArea(child: _getBodyContentWidget()),
+      body: SafeArea(child: _getBodyContentWidget(context)),
     );
   }
 
   /// 获取内容主题的listView
-  _getBodyContentWidget() {
+  _getBodyContentWidget(BuildContext context) {
     return  TableView(
               tableHeaderView: _getHeaderView(context),
               sectionNumber: 2,

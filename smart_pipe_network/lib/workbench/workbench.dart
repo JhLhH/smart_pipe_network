@@ -24,14 +24,10 @@ class _WorkBenchPageState extends State<WorkBenchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('工作台'),
-        centerTitle: true,
-      ),
       body: Column(
         children: <Widget>[
           Container(
-            height: 180,
+            height: 240,
             width: double.infinity,
             child: Image.asset(
               'images/2.jpg',
