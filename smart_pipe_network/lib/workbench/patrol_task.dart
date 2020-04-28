@@ -50,7 +50,7 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
     ],
   ];
 
-  /// 未完成任务数据源
+  /// 已完成任务数据源
   List finishedData = [
     [
       '任务名称：2020.02.11巢湖路至护航路（含护航路）巡查',
@@ -273,6 +273,7 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
           // 轨迹查看
         } else if (index == 1) {
           // 病害详情
+          Navigator.pushNamed(context, 'DiseaseDetailsPage');
         }
       },
       child: Column(

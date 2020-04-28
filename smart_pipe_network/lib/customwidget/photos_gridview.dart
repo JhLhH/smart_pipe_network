@@ -24,12 +24,16 @@ class PhotosGridViewState extends State<PhotosGridView> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        GridView.count(
-          shrinkWrap: true,
-          crossAxisCount: 3,
-          crossAxisSpacing: 5.0,
-          mainAxisSpacing: 5.0,
-          children: _getWidgetList(context),
+        Container(
+          padding: EdgeInsets.all(10),
+          child: GridView.count(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            crossAxisCount: 3,
+            crossAxisSpacing: 5.0,
+            mainAxisSpacing: 5.0,
+            children: _getWidgetList(context),
+          ),
         ),
         Container(
           height: 1,
@@ -51,13 +55,18 @@ class PhotosGridViewState extends State<PhotosGridView> {
         _image = null;
       }
     }
-
     if (widget.photosType == PhotosType.edit) {
       items.add(_getDefaultListItem(context));
     }
-    if (images != null) {
-      images.forEach((image) {
-        items.add(_getItemContainer(context, image));
+    if (widget.photosType == PhotosType.edit) {
+      if (images != null) {
+        images.forEach((image) {
+          items.add(_getItemContainer(context, image));
+        });
+      }
+    } else {
+      widget.imageUrls.forEach((imageUrl) {
+        items.add(_getShowItemContainer(context, imageUrl));
       });
     }
     return items;
@@ -88,6 +97,25 @@ class PhotosGridViewState extends State<PhotosGridView> {
     );
   }
 
+  /// 返回的纯展示照片的widget
+  Widget _getShowItemContainer(BuildContext context, String imageUrl) {
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.white, width: 1),
+          borderRadius: BorderRadius.circular(8)),
+      alignment: Alignment.center,
+      child:ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image.network(
+          imageUrl,
+          fit: BoxFit.cover,
+          height: double.infinity,
+          width: double.infinity,
+        ),
+      ),
+    );
+  }
+
   /// 返回的照片展示的widget
   Widget _getItemContainer(BuildContext context, image) {
     return GestureDetector(
@@ -99,11 +127,17 @@ class PhotosGridViewState extends State<PhotosGridView> {
           Container(
             margin: EdgeInsets.all(10),
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey, width: 1),
+                border: Border.all(color: Colors.white, width: 1),
                 borderRadius: BorderRadius.circular(8)),
             alignment: Alignment.center,
-            child: Image.file(
-              image,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.file(
+                  image,
+                  fit: BoxFit.cover,
+                  height: double.infinity,
+                  width: double.infinity,
+              ),
             ),
           ),
           Positioned(

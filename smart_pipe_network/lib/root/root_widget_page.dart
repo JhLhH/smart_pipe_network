@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smartpipenetwork/electronicmap/home_map.dart';
 import 'package:smartpipenetwork/systemsetting/system_setting.dart';
 import 'package:smartpipenetwork/workbench/disease_report.dart';
+import 'package:smartpipenetwork/workbench/disease_report_details.dart';
 import 'package:smartpipenetwork/workbench/patrol_task.dart';
 import 'package:smartpipenetwork/workbench/patrol_task_details.dart';
 import 'package:smartpipenetwork/workbench/workbench.dart';
@@ -32,6 +33,7 @@ class _RootWidgetPageState extends State<RootWidgetPage> {
     'patorlTask': (context) => PatrolTaskPage(),
     'PatrolTaskDetailsPage': (context) => PatrolTaskDetailsPage(),
     'DiseaseReportPage': (context) => DiseaseReportPage(),
+    'DiseaseDetailsPage':(context) =>DiseaseDetailsPage(),
   };
 
   changeIndex(int index) {

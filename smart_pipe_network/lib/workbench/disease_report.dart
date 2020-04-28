@@ -219,9 +219,6 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
    _headerCell(BuildContext context) {
     List<Widget> items = [];
     for(int i = 0; i < headerPrefixTitles.length;i++){
-      if(i == 5) {
-        items.add(_getAddPhotoWidget());
-      }else{
         items.add( CustomTextField(
           hintText: headerHintTexts[i],
           prefixText: headerPrefixTitles[i],
@@ -230,7 +227,6 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
             print('TableViewHeader第$i行输入$value');
           },
         ));
-      }
     }
     return items;
   }
