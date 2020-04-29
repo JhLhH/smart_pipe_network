@@ -114,7 +114,7 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
 
   /// 获取cell
   _getCell(BuildContext context, int row) {
-    if (row == items.length-1) {
+    if (row == items.length - 1) {
       // 最后一个放置按钮
       return GestureDetector(
         onTap: () {
@@ -132,7 +132,8 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
         ),
       );
     } else {
-      return _getBodyText(items[row],color: row == 1? Colors.black:Colors.grey);
+      return _getBodyText(items[row],
+          color: row == 1 ? Colors.black : Colors.grey);
     }
   }
 
@@ -144,11 +145,8 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _getTopButton(
-              0,
-              _isTapStart ? '正在巡查' : '开始巡查',
-              _isTapStart ? Colors.green : Colors.lightBlue,
-              context),
+          _getTopButton(0, _isTapStart ? '正在巡查' : '开始巡查',
+              _isTapStart ? Colors.green : Colors.lightBlue, context),
           _getTopButton(1, _isTapEnd ? '已完成' : '完成结束',
               _isTapEnd ? Colors.grey : Colors.red, context),
         ],

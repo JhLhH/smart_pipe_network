@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:smartpipenetwork/models/login_network_query.dart';
 import 'package:smartpipenetwork/root/root_widget_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -31,13 +32,45 @@ class _LoginPageState extends State<LoginPage> {
           showCenterShortToast();
         });
       }
-      Future.delayed(Duration(seconds: 2), () {
-        setState(() {
-          waringInfo = null;
-        });
-      });
       return false;
     }
+  }
+
+  /// 登录
+  void goLogin(BuildContext context)async{
+    var pass = _checkLoginInfo(context);
+    if (pass == false) return;
+    Map<String, dynamic>params = {
+      'username':userName,
+      'password':password
+    };
+    var model = await LoginNetWorkQuery.login(params);
+    if(model != null){
+      // 登录成功
+      runApp(RootWidgetPage());
+    }
+  }
+
+  /// 登录提示
+  Future showLoginProgress(BuildContext context) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              CircularProgressIndicator(),
+              Padding(
+                padding: const EdgeInsets.only(top: 26.0),
+                child: Text("正在登录，请稍后..."),
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 
   /// 提示
@@ -71,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                 _getRichText(),
                 _getUserNameTextField(),
                 _getPasswordTextField(),
-                _getButton('登  录', Colors.blue), // 获取登录按钮
+                _getButton(context,'登  录', Colors.blue), // 获取登录按钮
               ],
             )),
           ),
@@ -103,12 +136,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   /// 获取按钮
-  _getButton(String title, Color color) {
+  _getButton(BuildContext context,String title, Color color) {
     return GestureDetector(
       onTap: () {
-        if (_checkLoginInfo(context)) {
-          runApp(RootWidgetPage());
-        }
+        goLogin(context);
       },
       child: Container(
         alignment: Alignment.center,
