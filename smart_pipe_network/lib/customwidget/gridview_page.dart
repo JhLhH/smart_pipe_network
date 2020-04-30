@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:smartpipenetwork/process_examine/process_exmine.dart';
 // ignore: must_be_immutable
 class GridViewPage extends StatefulWidget {
   /// 标题名字
@@ -47,9 +47,29 @@ class _GridViewPageState extends State<GridViewPage> {
       onTap: () {
         if (widget.routeNames != null && widget.routeNames[title] != null) {
           print('当前点击$title Item');
-          Navigator.pushNamed(context, widget.routeNames[title]);
+          if (title == '病害工单') {
+            _pushParameterWidgetPage(
+                context, 'http://dev.hn.hadutech.com/94/desease/', title);
+          } else if (title == '流程审批') {
+            _pushParameterWidgetPage(
+                context, 'http://dev.hn.hadutech.com/94/spList/', title);
+          } else if (title == '汛情巡查') {
+            _pushParameterWidgetPage(
+                context, 'http://dev.hn.hadutech.com/94/floodInspection/', title);
+          } else if (title == '汛情上报') {
+            _pushParameterWidgetPage(
+                context, 'http://dev.hn.hadutech.com/94/floodTask/', title);
+          } else if (title == '汛情处理') {
+            _pushParameterWidgetPage(context,
+                'http://dev.hn.hadutech.com/94/floodManage/', title);
+          } else if (title == '病害查看') {
+            _pushParameterWidgetPage(context,
+                'http://dev.hn.hadutech.com/94/deseaseList/', title);
+          } else {
+            Navigator.pushNamed(context, widget.routeNames[title]);
+          }
         } else {
-          print('未查找到该路由');
+          print('未查找到该路由$title');
         }
       },
       child: Container(
@@ -63,7 +83,7 @@ class _GridViewPageState extends State<GridViewPage> {
               size: 30.0,
             ),
             Padding(
-              padding: EdgeInsets.only(top: 10),
+              padding: EdgeInsets.only(top: 5),
               child: Text(
                 title,
                 style: TextStyle(fontSize: 16, color: Colors.black),
@@ -74,5 +94,12 @@ class _GridViewPageState extends State<GridViewPage> {
         color: Colors.white,
       ),
     );
+  }
+
+  /// push出一个包含参数的widget
+  _pushParameterWidgetPage(BuildContext context, String url, String title) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ProcessExaminePage(url: url, title: title);
+    }));
   }
 }

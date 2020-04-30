@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'disease_report.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tableview/tableview.dart';
-
-import 'disease_report.dart';
-
 /// 巡查任务未完成详情页面
 class PatrolTaskDetailsPage extends StatefulWidget {
   // 导航栏标题传入

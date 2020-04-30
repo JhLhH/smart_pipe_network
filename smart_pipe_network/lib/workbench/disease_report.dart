@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:tableview/tableview.dart';
 import 'package:smartpipenetwork/customwidget/custom_textfield.dart';
 import 'package:smartpipenetwork/customwidget/photos_gridview.dart';
-import 'package:tableview/tableview.dart';
 
 /// 巡查任务未完成详情页面
 class DiseaseReportPage extends StatefulWidget {
@@ -59,7 +59,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
 
   // 获取选择得到的照片
   final GlobalKey<PhotosGridViewState> _photoKey =
-      GlobalKey<PhotosGridViewState>();
+  GlobalKey<PhotosGridViewState>();
   int _sectionCount = 1;
 
 
@@ -172,13 +172,13 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     return row == 5
         ? _getAddPhotoWidget()
         : CustomTextField(
-            hintText: hintTexts[row],
-            prefixText: prefixTitles[row],
-            suffixIconStyle: _getSuffixIconStyle(row),
-            onChanged: (value) {
-              print('第$section组第$row行输入$value');
-            },
-          );
+      hintText: hintTexts[row],
+      prefixText: prefixTitles[row],
+      suffixIconStyle: _getSuffixIconStyle(row),
+      onChanged: (value) {
+        print('第$section组第$row行输入$value');
+      },
+    );
   }
 
   /// 获取输入框的样式
@@ -211,22 +211,22 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
   /// 获取tableView的头部视图
   _getHeaderView(BuildContext context) {
     return Column(
-        children: _headerCell(context),
+      children: _headerCell(context),
     );
   }
 
   /// 获取HeaderCell
-   _headerCell(BuildContext context) {
+  _headerCell(BuildContext context) {
     List<Widget> items = [];
     for(int i = 0; i < headerPrefixTitles.length;i++){
-        items.add( CustomTextField(
-          hintText: headerHintTexts[i],
-          prefixText: headerPrefixTitles[i],
-          suffixIconStyle: _getHeaderSuffixIconStyle(i),
-          onChanged: (value) {
-            print('TableViewHeader第$i行输入$value');
-          },
-        ));
+      items.add( CustomTextField(
+        hintText: headerHintTexts[i],
+        prefixText: headerPrefixTitles[i],
+        suffixIconStyle: _getHeaderSuffixIconStyle(i),
+        onChanged: (value) {
+          print('TableViewHeader第$i行输入$value');
+        },
+      ));
     }
     return items;
   }
@@ -254,8 +254,8 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
             child: Text(
               '新增病害',
               style: TextStyle(
-                color: Colors.blue,
-                fontSize: 18
+                  color: Colors.blue,
+                  fontSize: 18
               ),
             ),
           ),

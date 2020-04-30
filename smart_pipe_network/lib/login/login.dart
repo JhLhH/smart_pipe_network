@@ -100,13 +100,13 @@ class _LoginPageState extends State<LoginPage> {
             color: Colors.white,
             child: SafeArea(
                 child: Column(
-              children: [
-                _getRichText(),
-                _getUserNameTextField(),
-                _getPasswordTextField(),
-                _getButton(context,'登  录', Colors.blue), // 获取登录按钮
-              ],
-            )),
+                  children: [
+                    _getRichText(),
+                    _getUserNameTextField(),
+                    _getPasswordTextField(),
+                    _getButton(context,'登  录', Colors.blue), // 获取登录按钮
+                  ],
+                )),
           ),
         ),
       ),
@@ -169,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       child: Container(
         decoration:
-            BoxDecoration(border: Border.all(color: Colors.black, width: 1)),
+        BoxDecoration(border: Border.all(color: Colors.black, width: 1)),
         child: TextField(
           controller: _userNameController,
           onChanged: (value) {
@@ -204,7 +204,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         child: Container(
           decoration:
-              BoxDecoration(border: Border.all(color: Colors.black, width: 1)),
+          BoxDecoration(border: Border.all(color: Colors.black, width: 1)),
           child: TextField(
             controller: _passwordController,
             onChanged: (value) {

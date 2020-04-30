@@ -10,11 +10,7 @@ class _HomeMapPageState extends State<HomeMapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text(
-          '电子地图',
-          style: TextStyle(
-              color: Colors.blue, fontWeight: FontWeight.w400, fontSize: 18),
-        ),
+        child: Text('电子地图',style: TextStyle(color: Colors.blue,fontWeight: FontWeight.w400, fontSize: 18),),
       ),
     );
   }

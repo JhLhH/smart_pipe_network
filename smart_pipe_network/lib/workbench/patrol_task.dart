@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:smartpipenetwork/workbench/patrol_task_details.dart';
-
 /// 巡查任务
 class PatrolTaskPage extends StatefulWidget {
   @override
@@ -170,13 +169,13 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: item
                       .map((text) => Container(
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.fromLTRB(10, 5, 25, 5),
-                            child: Text(
-                              text,
-                              textAlign: TextAlign.left,
-                            ),
-                          ))
+                    alignment: Alignment.centerLeft,
+                    padding: EdgeInsets.fromLTRB(10, 5, 25, 5),
+                    child: Text(
+                      text,
+                      textAlign: TextAlign.left,
+                    ),
+                  ))
                       .toList(),
                 ),
               )
@@ -230,13 +229,13 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: item
                       .map((text) => Container(
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.fromLTRB(10, 5, 30, 5),
-                            child: Text(
-                              text,
-                              textAlign: TextAlign.left,
-                            ),
-                          ))
+                    alignment: Alignment.centerLeft,
+                    padding: EdgeInsets.fromLTRB(10, 5, 30, 5),
+                    child: Text(
+                      text,
+                      textAlign: TextAlign.left,
+                    ),
+                  ))
                       .toList(),
                 ),
               )

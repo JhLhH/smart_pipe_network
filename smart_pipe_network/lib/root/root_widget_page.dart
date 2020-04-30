@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:smartpipenetwork/electronicmap/home_map.dart';
+import 'package:smartpipenetwork/process_examine/process_exmine.dart';
 import 'package:smartpipenetwork/systemsetting/system_setting.dart';
+import 'package:smartpipenetwork/workbench/patrol_task.dart';
+import 'package:smartpipenetwork/workbench/workbench.dart';
+import 'package:smartpipenetwork/workbench/patrol_task_details.dart';
 import 'package:smartpipenetwork/workbench/disease_report.dart';
 import 'package:smartpipenetwork/workbench/disease_report_details.dart';
-import 'package:smartpipenetwork/workbench/patrol_task.dart';
-import 'package:smartpipenetwork/workbench/patrol_task_details.dart';
-import 'package:smartpipenetwork/workbench/workbench.dart';
-
 class RootWidgetPage extends StatefulWidget {
   @override
   _RootWidgetPageState createState() => _RootWidgetPageState();
@@ -27,14 +27,16 @@ class _RootWidgetPageState extends State<RootWidgetPage> {
     Icon(Icons.dashboard),
     Icon(Icons.settings)
   ];
-
   /// 路由表
   Map<String, WidgetBuilder> routes = {
-    'patorlTask': (context) => PatrolTaskPage(),
+    'patrolTask':(context)=>PatrolTaskPage(),//这里注册路由才能跳转,patorlTask是路由名字
     'PatrolTaskDetailsPage': (context) => PatrolTaskDetailsPage(),
+    'ProcessExamine':(context) => ProcessExaminePage(),
     'DiseaseReportPage': (context) => DiseaseReportPage(),
     'DiseaseDetailsPage':(context) =>DiseaseDetailsPage(),
-  };
+
+
+  };// 这里没写路由
 
   changeIndex(int index) {
     setState(() {
