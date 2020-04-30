@@ -1,3 +1,3 @@
 const String loginUrl = '/login';
-const String UNFinishedTask = '/task/inspector/undone';
-const String finishedTask = '/task/inspector/done';
+const String undoneTaskUrl = '/task/inspector/undone';
+const String finishedTaskUrl = '/task/inspector/done';

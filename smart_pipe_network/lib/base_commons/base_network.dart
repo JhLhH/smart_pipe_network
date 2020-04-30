@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'base_shared_preferences.dart';
 
 class BaseUrl {
@@ -28,7 +31,7 @@ class HTTPQuerery {
       url += optionsStr;
     }
     // 发送get请求
-    await _senderRequest(url, 'get', headers: headers);
+   return await _senderRequest(url, 'get', headers: headers);
   }
 
   /// post请求
@@ -50,10 +53,6 @@ class HTTPQuerery {
   /// headers 请求头（可选参数类型）
   static Future _senderRequest(String url, String method,
       {Map<String, dynamic> params, Map<String, dynamic> headers}) async {
-//    int _code;
-//    String _msg;
-//    var _backData;
-
     // 获取本地的token
     var token = await ShardPreferences.localGet('token');
 
@@ -67,7 +66,12 @@ class HTTPQuerery {
       Map<String, dynamic> httpHeader = {
         'Authentication': token,
       };
-
+      String contentType;
+      if (url.contains('/login')) {
+        contentType = 'application/x-www-form-urlencoded';
+      } else {
+        contentType = 'application/json';
+      }
       if (headers != null) {
         httpHeader.addAll(headers);
       }
@@ -80,7 +84,7 @@ class HTTPQuerery {
         // 响应流上前后两次接收到数据的间隔，毫秒
         headers: httpHeader,
         // 添加headers,如需设置统一的headers信息也可在此添加
-        contentType: "application/x-www-form-urlencoded",
+        contentType: contentType,
         responseType: ResponseType.plain,
       );
       print('请求方式:$method\n'
@@ -93,8 +97,18 @@ class HTTPQuerery {
       } else {
         response = await dio.post(url, data: params);
       }
-      print('response===$response====');
-      return response.data;
+
+      /// 拿到最初的数据用以判断钱请求是否成功以及失败的msg提示
+      Map<String, dynamic> tempResponse = json.decode(response.data);
+      print('response===${json.decode(response.data)}====');
+      if (tempResponse['ret']) {
+        // 成功
+        return response.data;
+      } else {
+        // 失败提示用户msg信息
+        Fluttertoast.showToast(msg: tempResponse['msg']);
+        return null;
+      }
     } catch (exception) {
       return '数据请求错误' + exception.toString();
     }

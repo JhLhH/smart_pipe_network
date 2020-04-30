@@ -1,33 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:smartpipenetwork/models/undone_task_model_entity.dart';
 import 'disease_report.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tableview/tableview.dart';
+
 /// 巡查任务未完成详情页面
 class PatrolTaskDetailsPage extends StatefulWidget {
   // 导航栏标题传入
-  final String title;
+  final UndoneTaskModelResult modelResult;
 
-  PatrolTaskDetailsPage({this.title});
+  PatrolTaskDetailsPage({@required this.modelResult});
 
   @override
   _PatrolTaskDetailsPageState createState() => _PatrolTaskDetailsPageState();
 }
 
 class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
-  final List<String> items = [
-    '任务编号：RW202000414001',
-    '任务名称：2020.02.11巢湖路至护航路（含护航路）巡查',
-    '周期：1周/次',
-    '起始时间：2019-05-11 至 2019-12-30',
-    '安排时间：2019-05-10 09:30',
-    '派发人：李书长',
-    '任务状态：进行中',
-    '备注：无',
-    '巡查路径'
-  ];
+  List<String> items;
   bool _isTapStart = false; // 控制按钮颜色和文字变化
   bool _isTapEnd = false; // 控制按钮颜色和文字变化
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    items = [
+      '任务名称：${widget.modelResult.plantName}',
+      '周期：无',
+      '起始时间：${widget.modelResult.startTime} 至 ${widget.modelResult.endTime}',
+      '安排时间：${widget.modelResult.generateTime}',
+      '任务状态：${widget.modelResult.status == 1 ? '进行中' : '未开始'}',
+      '备注：无',
+      '巡查路径'
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -35,7 +43,7 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
     double bottomPadding = MediaQuery.of(context).padding.bottom;
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.title),
+          title: Text(widget.modelResult.name),
           centerTitle: true,
           leading: BackButton(
             onPressed: () {
@@ -87,12 +95,14 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
   _getBottomButton(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // 病害上报路由跳转DiseaseReportPage中需要先声明变量taskNum
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return DiseaseReportPage(
-            taskNum: 'RW20191102001',
-          );
-        }));
+        if (_isTapStart) {
+          // 病害上报路由跳转DiseaseReportPage中需要先声明变量taskNum
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+            return DiseaseReportPage(
+              taskNum: 'RW20191102001',
+            );
+          }));
+        }
       },
       child: Container(
         height: 49,
@@ -103,7 +113,7 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
           style: TextStyle(color: Colors.white, fontSize: 18),
         ),
         decoration: BoxDecoration(
-            color: Colors.blue,
+            color: _isTapStart ? Colors.blue : Colors.grey,
             border: Border.all(color: Colors.white, width: 1),
             borderRadius: BorderRadius.circular(10)),
       ),
@@ -144,7 +154,7 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _getTopButton(0, _isTapStart ? '正在巡查' : '开始巡查',
-              _isTapStart ? Colors.green : Colors.lightBlue, context),
+              _isTapStart ? Colors.grey : Colors.lightBlue, context),
           _getTopButton(1, _isTapEnd ? '已完成' : '完成结束',
               _isTapEnd ? Colors.grey : Colors.red, context),
         ],
@@ -163,10 +173,10 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
       child: GestureDetector(
         onTap: () {
           setState(() {
-            if (index == 0) {
-              _isTapStart = !_isTapStart;
-            } else if (index == 1) {
-              _isTapEnd = !_isTapEnd;
+            if (index == 0 && _isTapStart == false) {
+              _isTapStart = true;
+            } else if (index == 1 && _isTapEnd == false) {
+              _isTapEnd = true;
             }
           });
         },

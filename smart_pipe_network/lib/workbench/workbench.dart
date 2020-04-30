@@ -10,10 +10,36 @@ class WorkBenchPage extends StatefulWidget {
 }
 
 class _WorkBenchPageState extends State<WorkBenchPage> {
-  final String headerImgUrl = 'http://pages.ctrip.com/commerce/promote/20180718/yxzy/img/640sygd.jpg';
-  final List<String> titles = ['巡查任务', '病害工单', '流程审批', '汛情巡查', '汛情上报', '汛情处理','病毒查看'];
-  final List<IconData> iconDatas = [Icons.border_all,Icons.border_all,Icons.edit,Icons.border_all,Icons.border_all,Icons.edit,Icons.edit];
-  final routeNames = {'巡查任务':'patrolTask','病害工单':'ProcessExamine','流程审批':'ProcessExamine','汛情巡查':'ProcessExamine','汛情上报':'ProcessExamine','汛情处理':'ProcessExamine','病毒查看':'ProcessExamine'};
+  final String headerImgUrl =
+      'http://pages.ctrip.com/commerce/promote/20180718/yxzy/img/640sygd.jpg';
+  final List<String> titles = [
+    '巡查任务',
+    '病害工单',
+    '流程审批',
+    '汛情巡查',
+    '汛情上报',
+    '汛情处理',
+    '病毒查看'
+  ];
+  final List<IconData> iconDatas = [
+    Icons.border_all,
+    Icons.border_all,
+    Icons.edit,
+    Icons.border_all,
+    Icons.border_all,
+    Icons.edit,
+    Icons.edit
+  ];
+  final routeNames = {
+    '巡查任务': 'patrolTask',
+    '病害工单': 'ProcessExamine',
+    '流程审批': 'ProcessExamine',
+    '汛情巡查': 'ProcessExamine',
+    '汛情上报': 'ProcessExamine',
+    '汛情处理': 'ProcessExamine',
+    '病毒查看': 'ProcessExamine'
+  };
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,9 +52,7 @@ class _WorkBenchPageState extends State<WorkBenchPage> {
             fit: BoxFit.fill,
           ),
           GridViewPage(
-              titles: titles,
-              iconDatas: iconDatas,
-              routeNames: routeNames)
+              titles: titles, iconDatas: iconDatas, routeNames: routeNames)
         ],
       ),
     );

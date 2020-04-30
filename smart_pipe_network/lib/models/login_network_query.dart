@@ -13,6 +13,7 @@ class LoginNetWorkQuery{
       LoginModelEntity loginModel = loginModelEntityFromJson(LoginModelEntity(),json.decode(data));
       // 保存token
       ShardPreferences.localSave('token', loginModel.result.token);
+      ShardPreferences.localSave('userName', loginModel.result.user.realName);
       print('------$loginModel.result.token------');
 
       return loginModel;

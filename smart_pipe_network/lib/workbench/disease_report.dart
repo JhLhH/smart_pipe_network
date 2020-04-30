@@ -18,19 +18,11 @@ class DiseaseReportPage extends StatefulWidget {
 
 class _DiseaseReportPageState extends State<DiseaseReportPage> {
   /// 头部数据
-  final List<String> headerPrefixTitles = [
-    '任务名称：',
-    '巡查人员：',
-    '发现时间：',
-    '所属片区：',
-    '巡查路段：'
-  ];
+  final List<String> headerPrefixTitles = ['发现时间：', '巡查路段：'];
 
   /// 头部数据
   List<String> headerHintTexts = [
-    '请输入巡查人员姓名',
     '请选择时间',
-    '请选择所属片区',
     '请选择巡查路段',
   ];
 
@@ -59,19 +51,14 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
 
   // 获取选择得到的照片
   final GlobalKey<PhotosGridViewState> _photoKey =
-  GlobalKey<PhotosGridViewState>();
+      GlobalKey<PhotosGridViewState>();
   int _sectionCount = 1;
-
-
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     double bottomPadding = MediaQuery.of(context).padding.bottom;
-    if(headerHintTexts[0] != widget.taskNum){
-      headerHintTexts.insert(0, widget.taskNum);
-    }
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -153,11 +140,11 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
       },
       child: Container(
         height: 49,
-        margin: EdgeInsets.only(left: 10, right: 10,top: 5,bottom: 5),
+        margin: EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
         alignment: Alignment.center,
         child: Text(
           '提交',
-          style: TextStyle(color: Colors.white,fontSize: 18),
+          style: TextStyle(color: Colors.white, fontSize: 18),
         ),
         decoration: BoxDecoration(
             color: Colors.blue,
@@ -172,13 +159,13 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     return row == 5
         ? _getAddPhotoWidget()
         : CustomTextField(
-      hintText: hintTexts[row],
-      prefixText: prefixTitles[row],
-      suffixIconStyle: _getSuffixIconStyle(row),
-      onChanged: (value) {
-        print('第$section组第$row行输入$value');
-      },
-    );
+            hintText: hintTexts[row],
+            prefixText: prefixTitles[row],
+            suffixIconStyle: _getSuffixIconStyle(row),
+            onChanged: (value) {
+              print('第$section组第$row行输入$value');
+            },
+          );
   }
 
   /// 获取输入框的样式
@@ -218,25 +205,17 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
   /// 获取HeaderCell
   _headerCell(BuildContext context) {
     List<Widget> items = [];
-    for(int i = 0; i < headerPrefixTitles.length;i++){
-      items.add( CustomTextField(
+    for (int i = 0; i < headerPrefixTitles.length; i++) {
+      items.add(CustomTextField(
         hintText: headerHintTexts[i],
         prefixText: headerPrefixTitles[i],
-        suffixIconStyle: _getHeaderSuffixIconStyle(i),
+        suffixIconStyle: SuffixIconStyle.dropdown,
         onChanged: (value) {
           print('TableViewHeader第$i行输入$value');
         },
       ));
     }
     return items;
-  }
-
-  /// 获取输入框的样式
-  _getHeaderSuffixIconStyle(int row) {
-    if (row == 0 || row == 1) {
-      return SuffixIconStyle.normal;
-    }
-    return SuffixIconStyle.dropdown;
   }
 
   _getFootView() {
@@ -253,10 +232,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
             height: 49,
             child: Text(
               '新增病害',
-              style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 18
-              ),
+              style: TextStyle(color: Colors.blue, fontSize: 18),
             ),
           ),
           Container(
