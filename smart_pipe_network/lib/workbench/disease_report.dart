@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:smartpipenetwork/models/disease_report_network_query.dart';
+import 'package:smartpipenetwork/models/disease_way_model_entity_entity.dart';
 import 'package:tableview/tableview.dart';
 import 'package:smartpipenetwork/customwidget/custom_textfield.dart';
 import 'package:smartpipenetwork/customwidget/photos_gridview.dart';
@@ -19,6 +21,32 @@ class DiseaseReportPage extends StatefulWidget {
 class _DiseaseReportPageState extends State<DiseaseReportPage> {
   /// 头部数据
   final List<String> headerPrefixTitles = ['发现时间：', '巡查路段：'];
+
+  DiseaseWayModelEntityEntity model;
+  List<String> ways = [];
+  List<String> diseaseType = [
+    '沥青路面破损、缺失（m²）',
+    '沥青路面裂痕（m）',
+    '小便石破损、缺失（m²）',
+    '侧石破损、缺失（块）',
+    '平石破损、缺失（块）',
+    '人行道砖破损、缺失（m²）',
+    '盲道砖破损、缺失（m²）',
+    '雨污水井井盖病害（套）',
+    '雨水收水井周病害（处）',
+    '检查井缺销子（个）',
+    '检查井防坠网（套）'
+  ];
+
+  _getDiseaseWayModel() async {
+    DiseaseWayModelEntityEntity tempModel =
+        await DiseaseReportNetWorkQuery.diseaseWay();
+    setState(() {
+      tempModel.result.forEach((res) {
+        ways.add(res.name);
+      });
+    });
+  }
 
   /// 头部数据
   List<String> headerHintTexts = [
@@ -53,6 +81,12 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
   final GlobalKey<PhotosGridViewState> _photoKey =
       GlobalKey<PhotosGridViewState>();
   int _sectionCount = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _getDiseaseWayModel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -162,6 +196,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
             hintText: hintTexts[row],
             prefixText: prefixTitles[row],
             suffixIconStyle: _getSuffixIconStyle(row),
+            dropdownDataSources: row == 0? diseaseType:[],
             onChanged: (value) {
               print('第$section组第$row行输入$value');
             },
@@ -209,7 +244,12 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
       items.add(CustomTextField(
         hintText: headerHintTexts[i],
         prefixText: headerPrefixTitles[i],
-        suffixIconStyle: SuffixIconStyle.dropdown,
+        suffixIconStyle:
+            i == 0 ? SuffixIconStyle.date : SuffixIconStyle.dropdown,
+        dropdownDataSources: i == 1 ? ways:[],
+        onPressed: () {
+          // 弹出时间选择器
+        },
         onChanged: (value) {
           print('TableViewHeader第$i行输入$value');
         },

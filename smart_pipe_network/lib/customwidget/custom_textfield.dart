@@ -1,7 +1,9 @@
+import 'package:date_format/date_format.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:smartpipenetwork/customwidget/dropdown_widget.dart';
 
-enum SuffixIconStyle { normal, dropdown, location }
+enum SuffixIconStyle { normal, dropdown, location ,date}
 
 class CustomTextField extends StatefulWidget {
   /// 占位文字
@@ -13,6 +15,11 @@ class CustomTextField extends StatefulWidget {
   /// 是否可以编辑
   final bool enabled;
 
+  // 日历选择点击
+  final VoidCallback onPressed;
+
+  final List<String> dropdownDataSources;
+
   /// 输入框内值发生变化的回调
   final ValueChanged onChanged;
   final SuffixIconStyle suffixIconStyle;
@@ -22,7 +29,7 @@ class CustomTextField extends StatefulWidget {
       @required this.prefixText,
       this.enabled = true,
       this.onChanged,
-      this.suffixIconStyle = SuffixIconStyle.normal});
+      this.suffixIconStyle = SuffixIconStyle.normal, this.onPressed, this.dropdownDataSources});
 
   @override
   _CustomTextFieldState createState() => _CustomTextFieldState();
@@ -88,7 +95,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   _getRightIconButton(BuildContext context) {
     if (widget.suffixIconStyle == SuffixIconStyle.dropdown) {
       return CustomDropdownButton(
-          dataSources: ['选项1', '选项2', '选项3'],
+          dataSources: widget.dropdownDataSources,
           onChanged: (value) {
             setState(() {
               controller.text = value;
@@ -107,6 +114,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
               controller.text = '位置输入完成';
             });
           });
+    }
+    if(widget.suffixIconStyle == SuffixIconStyle.date){
+      return IconButton(icon: Icon(Icons.date_range,color: Colors.blue,), onPressed:(){
+        var nowTime = formatDate(DateTime.now(), [yyyy, "-", mm, "-", dd, " ", HH, ":", nn, ":", ss]);
+        setState(() {
+          controller.text = nowTime;
+        });
+      });
     }
     return Text('');
   }
