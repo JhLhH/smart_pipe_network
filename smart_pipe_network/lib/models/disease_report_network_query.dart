@@ -6,8 +6,8 @@ import 'dart:convert';
 import 'package:smartpipenetwork/models/disease_way_model_entity_entity.dart';
 import 'package:smartpipenetwork/generated/json/disease_way_model_entity_entity_helper.dart';
 class DiseaseReportNetWorkQuery {
-  static Future disease() async {
-    var data = await HTTPQuerery.post(diseaseUrl);
+  static Future disease({Map<String, dynamic>params}) async {
+    var data = await HTTPQuerery.post(diseaseUrl,params: params);
     try {
       // 解析json数据
       Map<String,dynamic> response = json.decode(data);
@@ -21,8 +21,8 @@ class DiseaseReportNetWorkQuery {
     }
   }
 
-  static Future diseaseDescribe() async {
-    var data = await HTTPQuerery.post(describeUrl);
+  static Future diseaseDescribe({Map<String, dynamic>params}) async {
+    var data = await HTTPQuerery.post(describeUrl,params: params);
     try {
       // 解析json数据
       Map<String,dynamic> response = json.decode(data);

@@ -22,6 +22,9 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
   /// 头部数据
   final List<String> headerPrefixTitles = ['发现时间：', '巡查路段：'];
 
+  /// 病害id
+  String _diseaseId;
+
   DiseaseWayModelEntityEntity model;
   List<String> ways = [];
   List<String> diseaseType = [
@@ -38,10 +41,19 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     '检查井防坠网（套）'
   ];
 
+  Map<String, String> inputHeaderValueMaps = {};
+
+  /// 分组
+  Map<int, Map<String, String>> sectionMaps = {};
+
+  /// 每个分组中的输入值
+  Map<String, String> inputCellValueMaps = {};
+
   _getDiseaseWayModel() async {
     DiseaseWayModelEntityEntity tempModel =
         await DiseaseReportNetWorkQuery.diseaseWay();
     setState(() {
+      model = tempModel;
       tempModel.result.forEach((res) {
         ways.add(res.name);
       });
@@ -164,12 +176,10 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
       onTap: () {
         // 统一校验
         if (_formKey.currentState.validate()) {
-          // 校验通过后可以遍历controllerMaps中的value，
-          // 他的值是controller中的text就是存放的目标字符串
-          // _photoKey.currentState.images存放选择的图片
-          if (_photoKey.currentState.images.isEmpty) {
-            Fluttertoast.showToast(msg: '缺少图片');
-          }
+          // 调用上报接口获取病害id
+          _submitDisease();
+          // id获取后上传病害描述关联id
+          // 有图片就上传图片
         }
       },
       child: Container(
@@ -188,17 +198,49 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     );
   }
 
+  _getCellDefaultText(BuildContext context, int section, int row) {
+    if (sectionMaps.keys.contains(section)) {
+      Map<String, String> tempMap = sectionMaps[section];
+      return tempMap[prefixTitles[row]];
+    }
+    return null;
+  }
+
   /// 获取cell
   Widget cell(BuildContext context, int section, int row) {
     return row == 5
         ? _getAddPhotoWidget()
         : CustomTextField(
             hintText: hintTexts[row],
+            defaultText: _getCellDefaultText(context, section, row),
             prefixText: prefixTitles[row],
             suffixIconStyle: _getSuffixIconStyle(row),
-            dropdownDataSources: row == 0? diseaseType:[],
-            onChanged: (value) {
-              print('第$section组第$row行输入$value');
+            dropdownDataSources: row == 0 ? diseaseType : [],
+            customTextFieldOnChanged: (prefixText, value) {
+              // 是否包含该key值，使用section分组来标识唯一的分组值
+              // 若包含该key值就去更新，不存在就去新建
+              if (sectionMaps.keys.contains(section)) {
+                // 存储输入值的Map
+                Map<String, String> tempMap = sectionMaps[section];
+                // 判断是否存在该key值
+                if (tempMap.keys.contains(prefixText)) {
+                  // 存在去更新
+                  tempMap[prefixText] = value;
+                } else {
+                  // 不存在去创建
+                  tempMap.addAll({prefixText: value});
+                }
+                // 创建完毕或更新完毕去替换原本的值
+                setState(() {
+                  sectionMaps[section] = tempMap;
+                });
+              } else {
+                setState(() {
+                  sectionMaps.addAll({
+                    section: {prefixText: value}
+                  });
+                });
+              }
             },
           );
   }
@@ -243,15 +285,24 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     for (int i = 0; i < headerPrefixTitles.length; i++) {
       items.add(CustomTextField(
         hintText: headerHintTexts[i],
+        defaultText: inputHeaderValueMaps.keys.contains(headerPrefixTitles[i])
+            ? inputHeaderValueMaps[headerPrefixTitles[i]]
+            : null,
         prefixText: headerPrefixTitles[i],
         suffixIconStyle:
             i == 0 ? SuffixIconStyle.date : SuffixIconStyle.dropdown,
-        dropdownDataSources: i == 1 ? ways:[],
-        onPressed: () {
-          // 弹出时间选择器
-        },
-        onChanged: (value) {
-          print('TableViewHeader第$i行输入$value');
+        dropdownDataSources: i == 1 ? ways : [],
+        customTextFieldOnChanged: (prefixText, value) {
+          // 如果key值存在就去更新value值，不存在就去创建字典并添加
+          if (inputHeaderValueMaps.keys.contains(headerHintTexts[i])) {
+            setState(() {
+              inputHeaderValueMaps[prefixText] = value;
+            });
+          } else {
+            setState(() {
+              inputHeaderValueMaps.addAll({prefixText: value});
+            });
+          }
         },
       ));
     }
@@ -283,4 +334,68 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
       ),
     );
   }
+
+  /// 网络请求模块
+
+  _submitDisease() async {
+    // 获取道路id
+    String wayName = inputHeaderValueMaps['巡查路段：'];
+    String wayId;
+    for (int i = 0; i< model.result.length;i++){
+      DiseaseWayModelEntityResult res = model.result[i];
+      if (res.name == wayName){
+        wayId = res.id;
+        break;
+      }
+    }
+    Map<String, dynamic> params = {
+      'discoveryTime': inputHeaderValueMaps['发现时间：'],
+      'wayId': wayId,
+      'memo': ' '
+    };
+    String tempId = await DiseaseReportNetWorkQuery.disease(params: params);
+    setState(() {
+      _diseaseId = tempId;
+    });
+    print('返回的病害id:$_diseaseId');
+    // 获取到id请求病害详情接口
+    if (tempId.isNotEmpty) {
+      // 获取到id去根据病害描述总数调用对用次数的接口
+      int successCount = 0;// 调用成功次数
+      int failCount = 0;// 调用失败次数
+
+      for(int i = 0;i<_sectionCount;i++){
+        Map<String, String> tempMap = sectionMaps[i];
+       bool isSuccess = await _submitDescribe(tempId, tempMap);
+       if(isSuccess){
+         successCount++;
+       }else{
+         failCount++;
+         Fluttertoast.showToast(msg: '第$i组病害描述上传失败');
+       }
+      }
+      Fluttertoast.showToast(msg: '上传成功$successCount个，失败$failCount个');
+      if(successCount == _sectionCount){
+        Future.delayed(Duration(seconds: 1),(){Navigator.pop(context);});
+      }
+    }
+  }
+
+  _submitDescribe(String diseaseId,Map<String,String> describeMap)async{
+    Map<String,dynamic> params = {
+      'refDisease':diseaseId,// 病害关联ID
+      'type':describeMap['病害种类：'],
+      'number':num.parse(describeMap['病害数量：']),
+      'address':describeMap['病害位置：'],
+      'reasonAnalysis':describeMap['原因分析：'],
+      'renovationMeasures':describeMap['整修措施：'],
+      'memo':' ',
+    };
+    String describeId = await DiseaseReportNetWorkQuery.diseaseDescribe(params:params);
+    if(describeId.isNotEmpty){
+      return true;
+    }
+    return false;
+  }
+
 }

@@ -3,7 +3,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:smartpipenetwork/customwidget/dropdown_widget.dart';
 
-enum SuffixIconStyle { normal, dropdown, location ,date}
+enum SuffixIconStyle { normal, dropdown, location, date }
+/// 当输入框值发生变化的时候回调
+///
+/// hintText 左侧的固定文字用来判断是哪一个输入框
+/// value 输入的值
+typedef CustomTextFieldOnChanged = void Function(String hintText, String value);
 
 class CustomTextField extends StatefulWidget {
   /// 占位文字
@@ -24,12 +29,18 @@ class CustomTextField extends StatefulWidget {
   final ValueChanged onChanged;
   final SuffixIconStyle suffixIconStyle;
 
+  final CustomTextFieldOnChanged customTextFieldOnChanged;
+  /// 默认值
+  final String defaultText;
+
   CustomTextField(
       {@required this.hintText,
       @required this.prefixText,
       this.enabled = true,
       this.onChanged,
-      this.suffixIconStyle = SuffixIconStyle.normal, this.onPressed, this.dropdownDataSources});
+      this.suffixIconStyle = SuffixIconStyle.normal,
+      this.onPressed,
+      this.dropdownDataSources, this.customTextFieldOnChanged, this.defaultText});
 
   @override
   _CustomTextFieldState createState() => _CustomTextFieldState();
@@ -37,10 +48,30 @@ class CustomTextField extends StatefulWidget {
 
 class _CustomTextFieldState extends State<CustomTextField> {
   TextEditingController controller = TextEditingController();
+
+  @override
+  void initState() {
+    if (widget.defaultText != null) {
+      setState(() {
+        controller.text = widget.defaultText;
+      });
+    }
+    super.initState();
+    controller.addListener(() {
+      widget.customTextFieldOnChanged(widget.prefixText,controller.text);
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
-       alignment: Alignment.center,
+      alignment: Alignment.center,
       children: [
         _getTextField(),
         Positioned(
@@ -59,8 +90,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
       padding: EdgeInsets.only(top: 10, left: 10, right: 10),
       child: TextFormField(
         controller: controller,
-        enabled: widget.suffixIconStyle == SuffixIconStyle.normal? true:false,
-        textAlign: TextAlign.right,
+        enabled:
+            widget.suffixIconStyle == SuffixIconStyle.normal ? true : false,
+        textAlign:
+            controller.text.length == 0 ? TextAlign.right : TextAlign.left,
         decoration: InputDecoration(
           hintText: widget.hintText,
           prefixIcon: Container(
@@ -115,13 +148,19 @@ class _CustomTextFieldState extends State<CustomTextField> {
             });
           });
     }
-    if(widget.suffixIconStyle == SuffixIconStyle.date){
-      return IconButton(icon: Icon(Icons.date_range,color: Colors.blue,), onPressed:(){
-        var nowTime = formatDate(DateTime.now(), [yyyy, "-", mm, "-", dd, " ", HH, ":", nn, ":", ss]);
-        setState(() {
-          controller.text = nowTime;
-        });
-      });
+    if (widget.suffixIconStyle == SuffixIconStyle.date) {
+      return IconButton(
+          icon: Icon(
+            Icons.date_range,
+            color: Colors.blue,
+          ),
+          onPressed: () {
+            var nowTime = formatDate(DateTime.now(),
+                [yyyy, "-", mm, "-", dd, " ", HH, ":", nn, ":", ss]);
+            setState(() {
+              controller.text = nowTime;
+            });
+          });
     }
     return Text('');
   }
