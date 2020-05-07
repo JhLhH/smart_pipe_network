@@ -14,8 +14,11 @@ class LoginNetWorkQuery{
       // 保存token
       ShardPreferences.localSave('token', loginModel.result.token);
       ShardPreferences.localSave('userName', loginModel.result.user.realName);
-      print('------$loginModel.result.token------');
+      ShardPreferences.localSave('account', loginModel.result.user.username);
+      ShardPreferences.localSave('mobile', loginModel.result.user.mobile);
+      ShardPreferences.localSave('deptName', loginModel.result.user.deptName);
 
+      print('------$loginModel.result.token------');
       return loginModel;
     }catch(error){
       print('error------$error------');

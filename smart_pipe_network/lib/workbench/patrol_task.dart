@@ -222,14 +222,11 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
           // 轨迹查看
         } else if (index == 1) {
           // 病害详情
-//          Navigator.pushNamed(context, 'DiseaseDetailsPage');
-
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-            return DiseaseDetailsPage(
-              diseaseId: finishedModel.result[index].id,
-            );
-          }));
-
+//          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+//            return DiseaseDetailsPage(
+//              diseaseId: finishedModel.result[index].id,
+//            );
+//          }));
         }
       },
       child: Column(

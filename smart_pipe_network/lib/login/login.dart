@@ -37,15 +37,12 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   /// 登录
-  void goLogin(BuildContext context)async{
+  void goLogin(BuildContext context) async {
     var pass = _checkLoginInfo(context);
     if (pass == false) return;
-    Map<String, dynamic>params = {
-      'username':userName,
-      'password':password
-    };
+    Map<String, dynamic> params = {'username': userName, 'password': password};
     var model = await LoginNetWorkQuery.login(params);
-    if(model != null){
+    if (model != null) {
       // 登录成功
       runApp(RootWidgetPage());
     }
@@ -97,16 +94,21 @@ class _LoginPageState extends State<LoginPage> {
           child: Container(
             width: width,
             height: height,
-            color: Colors.white,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("images/banner.png"), // 把图片换掉
+                fit: BoxFit.cover,
+              ),
+            ),
             child: SafeArea(
                 child: Column(
-                  children: [
-                    _getRichText(),
-                    _getUserNameTextField(),
-                    _getPasswordTextField(),
-                    _getButton(context,'登  录', Colors.blue), // 获取登录按钮
-                  ],
-                )),
+              children: [
+                _getRichText(),
+                _getUserNameTextField(),
+                _getPasswordTextField(),
+                _getButton(context, '登  录', Colors.blue), // 获取登录按钮
+              ],
+            )),
           ),
         ),
       ),
@@ -136,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   /// 获取按钮
-  _getButton(BuildContext context,String title, Color color) {
+  _getButton(BuildContext context, String title, Color color) {
     return GestureDetector(
       onTap: () {
         goLogin(context);
@@ -169,7 +171,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       child: Container(
         decoration:
-        BoxDecoration(border: Border.all(color: Colors.black, width: 1)),
+            BoxDecoration(border: Border.all(color: Colors.black, width: 1)),
         child: TextField(
           controller: _userNameController,
           onChanged: (value) {
@@ -204,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         child: Container(
           decoration:
-          BoxDecoration(border: Border.all(color: Colors.black, width: 1)),
+              BoxDecoration(border: Border.all(color: Colors.black, width: 1)),
           child: TextField(
             controller: _passwordController,
             onChanged: (value) {
