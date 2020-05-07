@@ -442,8 +442,8 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
         ids = '$ids,$value';
       }
     });
-    String refBizId = await HTTPQuerery.upDateImage(
+    bool result = await HTTPQuerery.upDateImage(
         {'refBizId': diseaseId, 'ids': ids});
-    return refBizId != null? true:false;
+    return result;
   }
 }

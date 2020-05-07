@@ -186,24 +186,22 @@ static Future upDateImage(Map<String,String> params) async {
         // 响应流上前后两次接收到数据的间隔，毫秒
         headers: httpHeader,
         // 添加headers,如需设置统一的headers信息也可在此添加
-        contentType: 'application/x-www-form-urlencoded',
+        contentType: 'application/json',
         responseType: ResponseType.plain,
       );
       print('请求url:$url\n请求参数:$params');
       Dio dio = Dio(option);
-      response = await dio.put(url, queryParameters: params);
+      response = await dio.put(url, data: params);
 
       /// 拿到最初的数据用以判断请求是否成功以及失败的msg提示
       Map<String, dynamic> tempResponse = json.decode(response.data);
       print('response===${json.decode(response.data)}====');
       if (tempResponse['ret']) {
-        // 成功
-        Map<String,dynamic> result = tempResponse['result'];
-        return result['refBizId'];// 返回一个病害id
+        return true;// 返回一个bool值
       } else {
         // 失败提示用户msg信息
         Fluttertoast.showToast(msg: tempResponse['msg']);
-        return null;
+        return false;
       }
     } catch (exception) {
       Fluttertoast.showToast(msg: '图片上传出错' + exception.toString());
