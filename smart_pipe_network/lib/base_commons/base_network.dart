@@ -94,7 +94,7 @@ class HTTPQuerery {
           '请求的参数:$params');
       Dio dio = Dio(option);
       if (method == 'get') {
-        response = await dio.get(url);
+        response = await dio.get(url,queryParameters: params);
       } else {
         response = await dio.post(url, data: params);
       }
@@ -191,7 +191,7 @@ static Future upDateImage(Map<String,String> params) async {
       );
       print('请求url:$url\n请求参数:$params');
       Dio dio = Dio(option);
-      response = await dio.put(url, data: params);
+      response = await dio.put(url, queryParameters: params);
 
       /// 拿到最初的数据用以判断请求是否成功以及失败的msg提示
       Map<String, dynamic> tempResponse = json.decode(response.data);

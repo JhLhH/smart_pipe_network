@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartpipenetwork/base_commons/base_shared_preferences.dart';
+import 'package:smartpipenetwork/main.dart';
 
 class SystemSettingPage extends StatefulWidget {
   @override
@@ -76,7 +77,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
             bottom: bottomPadding,
             width: width,
             height: 59,
-            child: _getBottomButton(context),
+            child: _getBottomButton(),
           )
         ],
       ),
@@ -91,9 +92,12 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
     );
   }
 
-  _getBottomButton(BuildContext context) {
+  _getBottomButton() {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        // 清空token根据需求来操作
+        runApp(MyApp());
+      },
       child: Container(
         height: 49,
         margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
