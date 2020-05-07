@@ -43,17 +43,19 @@ class _WorkBenchPageState extends State<WorkBenchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Image(
-            height: 244,
-            width: double.infinity,
-            image: AssetImage('images/banner.png'),
-            fit: BoxFit.fill,
-          ),
-          GridViewPage(
-              titles: titles, iconDatas: iconDatas, routeNames: routeNames)
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Image(
+              height: 244,
+              width: double.infinity,
+              image: AssetImage('images/banner.png'),
+              fit: BoxFit.fill,
+            ),
+            GridViewPage(
+                titles: titles, iconDatas: iconDatas, routeNames: routeNames)
+          ],
+        ),
       ),
     );
   }
