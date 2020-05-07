@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -31,7 +32,7 @@ class HTTPQuerery {
       url += optionsStr;
     }
     // 发送get请求
-   return await _senderRequest(url, 'get', headers: headers);
+    return await _senderRequest(url, 'get', headers: headers);
   }
 
   /// post请求
@@ -113,4 +114,103 @@ class HTTPQuerery {
       return '数据请求错误' + exception.toString();
     }
   }
+
+  static Future upload(File file) async {
+    // 获取本地的token
+    var token = await ShardPreferences.localGet('token');
+
+    String url = BaseUrl.url + '/file';
+
+    print('token==$token===');
+    try {
+      Map<String, dynamic> httpHeader = {
+        'Authentication': token,
+      };
+      // 配置请求头、超时时长、接受发送类型等信息
+      Response response;
+      BaseOptions option = BaseOptions(
+        connectTimeout: 10000,
+        //服务器链接超时，毫秒
+        receiveTimeout: 3000,
+        // 响应流上前后两次接收到数据的间隔，毫秒
+        headers: httpHeader,
+        // 添加headers,如需设置统一的headers信息也可在此添加
+        contentType: 'multipart/form-data',
+        responseType: ResponseType.plain,
+      );
+
+      var name = file.path.substring(file.path.lastIndexOf("/") + 1, file.path.length);
+      var postData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(
+            file.path, filename: name)
+      });
+
+      Dio dio = Dio(option);
+      response = await dio.post(url, data: postData);
+
+      /// 拿到最初的数据用以判断钱请求是否成功以及失败的msg提示
+      Map<String, dynamic> tempResponse = json.decode(response.data);
+      print('response===${json.decode(response.data)}====');
+      if (tempResponse['ret']) {
+        // 成功
+        Map<String,dynamic> result = tempResponse['result'];
+        return result['id'];
+      } else {
+        // 失败提示用户msg信息
+        Fluttertoast.showToast(msg: tempResponse['msg']);
+        return null;
+      }
+    } catch (exception) {
+      Fluttertoast.showToast(msg: '图片上传出错' + exception.toString());
+      return null;
+    }
+  }
+
+static Future upDateImage(Map<String,String> params) async {
+    // 获取本地的token
+    var token = await ShardPreferences.localGet('token');
+
+    String url = BaseUrl.url + '/file';
+
+    print('token==$token===');
+    try {
+      Map<String, dynamic> httpHeader = {
+        'Authentication': token,
+      };
+      // 配置请求头、超时时长、接受发送类型等信息
+      Response response;
+      BaseOptions option = BaseOptions(
+        connectTimeout: 10000,
+        //服务器链接超时，毫秒
+        receiveTimeout: 3000,
+        // 响应流上前后两次接收到数据的间隔，毫秒
+        headers: httpHeader,
+        // 添加headers,如需设置统一的headers信息也可在此添加
+        contentType: 'application/x-www-form-urlencoded',
+        responseType: ResponseType.plain,
+      );
+      print('请求url:$url\n请求参数:$params');
+      Dio dio = Dio(option);
+      response = await dio.put(url, data: params);
+
+      /// 拿到最初的数据用以判断请求是否成功以及失败的msg提示
+      Map<String, dynamic> tempResponse = json.decode(response.data);
+      print('response===${json.decode(response.data)}====');
+      if (tempResponse['ret']) {
+        // 成功
+        Map<String,dynamic> result = tempResponse['result'];
+        return result['refBizId'];// 返回一个病害id
+      } else {
+        // 失败提示用户msg信息
+        Fluttertoast.showToast(msg: tempResponse['msg']);
+        return null;
+      }
+    } catch (exception) {
+      Fluttertoast.showToast(msg: '图片上传出错' + exception.toString());
+      return null;
+    }
+  }
+
+
+
 }

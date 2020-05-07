@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:smartpipenetwork/base_commons/base_network.dart';
 import 'package:smartpipenetwork/models/disease_report_network_query.dart';
 import 'package:smartpipenetwork/models/disease_way_model_entity_entity.dart';
 import 'package:tableview/tableview.dart';
@@ -45,9 +47,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
 
   /// 分组
   Map<int, Map<String, String>> sectionMaps = {};
-
-  /// 每个分组中的输入值
-  Map<String, String> inputCellValueMaps = {};
+  Map<int, Map<String, List<String>>> sectionImgMaps = {};
 
   _getDiseaseWayModel() async {
     DiseaseWayModelEntityEntity tempModel =
@@ -209,7 +209,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
   /// 获取cell
   Widget cell(BuildContext context, int section, int row) {
     return row == 5
-        ? _getAddPhotoWidget()
+        ? _getAddPhotoWidget(section)
         : CustomTextField(
             hintText: hintTexts[row],
             defaultText: _getCellDefaultText(context, section, row),
@@ -257,7 +257,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
   }
 
   /// 获取上传图片的widget
-  _getAddPhotoWidget() {
+  _getAddPhotoWidget(int section) {
     return Column(
       children: [
         Container(
@@ -267,7 +267,33 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
             "上传图片",
           ),
         ),
-        PhotosGridView(),
+        PhotosGridView(
+          // 这里存放的是图片id的数组
+          photosOnChanged: (prefixText, imageIDs) {
+            if (sectionImgMaps.keys.contains(section)) {
+              // 存储输入值的Map
+              Map<String, List<String>> tempMap = sectionImgMaps[section];
+              // 判断是否存在该key值
+              if (tempMap.keys.contains(prefixText)) {
+                // 存在去更新
+                tempMap[prefixText] = imageIDs;
+              } else {
+                // 不存在去创建
+                tempMap.addAll({prefixText: imageIDs});
+              }
+              // 创建完毕或更新完毕去替换原本的值
+              setState(() {
+                sectionImgMaps[section] = tempMap;
+              });
+            } else {
+              setState(() {
+                sectionImgMaps.addAll({
+                  section: {prefixText: imageIDs}
+                });
+              });
+            }
+          },
+        ),
       ],
     );
   }
@@ -341,9 +367,9 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     // 获取道路id
     String wayName = inputHeaderValueMaps['巡查路段：'];
     String wayId;
-    for (int i = 0; i< model.result.length;i++){
+    for (int i = 0; i < model.result.length; i++) {
       DiseaseWayModelEntityResult res = model.result[i];
-      if (res.name == wayName){
+      if (res.name == wayName) {
         wayId = res.id;
         break;
       }
@@ -361,41 +387,63 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     // 获取到id请求病害详情接口
     if (tempId.isNotEmpty) {
       // 获取到id去根据病害描述总数调用对用次数的接口
-      int successCount = 0;// 调用成功次数
-      int failCount = 0;// 调用失败次数
-
-      for(int i = 0;i<_sectionCount;i++){
+      int successCount = 0; // 调用成功次数
+      int failCount = 0; // 调用失败次数
+      for (int i = 0; i < _sectionCount; i++) {
         Map<String, String> tempMap = sectionMaps[i];
-       bool isSuccess = await _submitDescribe(tempId, tempMap);
-       if(isSuccess){
-         successCount++;
-       }else{
-         failCount++;
-         Fluttertoast.showToast(msg: '第$i组病害描述上传失败');
-       }
+        Map<String, List<String>> imgMap = sectionImgMaps[i];
+        bool isSuccess = await _submitDescribe(tempId, tempMap);
+        bool isSuccessImg = await _submitDescribeImg(tempId, imgMap);
+        if (isSuccess) {
+          successCount++;
+        } else {
+          failCount++;
+          Fluttertoast.showToast(msg: '第$i组病害描述上传失败');
+        }
       }
-      Fluttertoast.showToast(msg: '上传成功$successCount个，失败$failCount个');
-      if(successCount == _sectionCount){
-        Future.delayed(Duration(seconds: 1),(){Navigator.pop(context);});
+
+      if (successCount == _sectionCount) {
+          Future.delayed(Duration(seconds: 2), () {
+            Navigator.pop(context);
+          });
       }
     }
   }
 
-  _submitDescribe(String diseaseId,Map<String,String> describeMap)async{
-    Map<String,dynamic> params = {
-      'refDisease':diseaseId,// 病害关联ID
-      'type':describeMap['病害种类：'],
-      'number':num.parse(describeMap['病害数量：']),
-      'address':describeMap['病害位置：'],
-      'reasonAnalysis':describeMap['原因分析：'],
-      'renovationMeasures':describeMap['整修措施：'],
-      'memo':' ',
+  _submitDescribe(String diseaseId, Map<String, String> describeMap) async {
+    Map<String, dynamic> params = {
+      'refDisease': diseaseId, // 病害关联ID
+      'type': describeMap['病害种类：'],
+      'number': num.parse(describeMap['病害数量：']),
+      'address': describeMap['病害位置：'],
+      'reasonAnalysis': describeMap['原因分析：'],
+      'renovationMeasures': describeMap['整修措施：'],
+      'memo': ' ',
     };
-    String describeId = await DiseaseReportNetWorkQuery.diseaseDescribe(params:params);
-    if(describeId.isNotEmpty){
+    // 上传病害描述
+    String describeId =
+        await DiseaseReportNetWorkQuery.diseaseDescribe(params: params);
+    if (describeId.isNotEmpty) {
       return true;
     }
     return false;
   }
 
+  _submitDescribeImg(
+      String diseaseId, Map<String, List<String>> imgMaps) async {
+    // 获取图片id
+    List<String> imageIds = imgMaps['上传图片'];
+    // 拼接图片id
+    String ids = '';
+    imageIds.forEach((value) {
+      if(ids == ''){
+        ids = '$value';
+      }else{
+        ids = '$ids,$value';
+      }
+    });
+    String refBizId = await HTTPQuerery.upDateImage(
+        {'refBizId': diseaseId, 'ids': ids});
+    return refBizId != null? true:false;
+  }
 }

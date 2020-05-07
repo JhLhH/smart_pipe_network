@@ -8,7 +8,7 @@ enum SuffixIconStyle { normal, dropdown, location, date }
 ///
 /// hintText 左侧的固定文字用来判断是哪一个输入框
 /// value 输入的值
-typedef CustomTextFieldOnChanged = void Function(String hintText, String value);
+typedef CustomTextFieldOnChanged = void Function(String prefixText, String value);
 
 class CustomTextField extends StatefulWidget {
   /// 占位文字

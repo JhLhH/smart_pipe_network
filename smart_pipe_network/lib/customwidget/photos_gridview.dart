@@ -1,15 +1,22 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:smartpipenetwork/base_commons/base_network.dart';
 
 enum PhotosType { edit, show }
 
-// ignore: must_be_immutable
-class PhotosGridView extends StatefulWidget {
-  List<String> imageUrls;
-  PhotosType photosType;
+typedef PhotosOnChanged = void Function(String prefixText, List<String> imgIds);
 
-  PhotosGridView({this.imageUrls, this.photosType = PhotosType.edit});
+class PhotosGridView extends StatefulWidget {
+  final List<String> imageUrls;
+  final PhotosType photosType;
+  final PhotosOnChanged photosOnChanged;
+
+  PhotosGridView(
+      {this.imageUrls,
+      this.photosType = PhotosType.edit,
+      this.photosOnChanged});
 
   @override
   PhotosGridViewState createState() => PhotosGridViewState();
@@ -18,6 +25,7 @@ class PhotosGridView extends StatefulWidget {
 class PhotosGridViewState extends State<PhotosGridView> {
   final List<String> sheetTitles = ['拍照', '从手机相机选择', '取消'];
   List images;
+  List<String> imageIds = [];
   var _image;
 
   @override
@@ -104,7 +112,7 @@ class PhotosGridViewState extends State<PhotosGridView> {
           border: Border.all(color: Colors.white, width: 1),
           borderRadius: BorderRadius.circular(8)),
       alignment: Alignment.center,
-      child:ClipRRect(
+      child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Image.network(
           imageUrl,
@@ -133,10 +141,10 @@ class PhotosGridViewState extends State<PhotosGridView> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.file(
-                  image,
-                  fit: BoxFit.cover,
-                  height: double.infinity,
-                  width: double.infinity,
+                image,
+                fit: BoxFit.cover,
+                height: double.infinity,
+                width: double.infinity,
               ),
             ),
           ),
@@ -197,9 +205,14 @@ class PhotosGridViewState extends State<PhotosGridView> {
 
   /// 获取图片相机/相册
   Future getImage(ImageSource source) async {
-    var image = await ImagePicker.pickImage(source: source);
+    File image = await ImagePicker.pickImage(source: source);
+    String id = await HTTPQuerery.upload(image);
     setState(() {
       Navigator.pop(context);
+      if (id.isNotEmpty) {
+        imageIds.add(id);
+        widget.photosOnChanged('上传图片',imageIds);
+      }
       _image = image;
     });
   }

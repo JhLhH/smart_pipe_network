@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smartpipenetwork/models/finished_task_model_entity_entity.dart';
 import 'package:smartpipenetwork/models/task_network_query.dart';
 import 'package:smartpipenetwork/models/undone_task_model_entity.dart';
+import 'package:smartpipenetwork/workbench/disease_report_details.dart';
 import 'package:smartpipenetwork/workbench/patrol_task_details.dart';
 
 /// 巡查任务
@@ -221,7 +222,14 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
           // 轨迹查看
         } else if (index == 1) {
           // 病害详情
-          Navigator.pushNamed(context, 'DiseaseDetailsPage');
+//          Navigator.pushNamed(context, 'DiseaseDetailsPage');
+
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+            return DiseaseDetailsPage(
+              diseaseId: finishedModel.result[index].id,
+            );
+          }));
+
         }
       },
       child: Column(
