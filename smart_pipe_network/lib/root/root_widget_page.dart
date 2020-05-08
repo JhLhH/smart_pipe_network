@@ -29,7 +29,7 @@ class _RootWidgetPageState extends State<RootWidgetPage> {
   ];
   /// 路由表
   Map<String, WidgetBuilder> routes = {
-    'patrolTask':(context)=>PatrolTaskPage(),//这里注册路由才能跳转,patorlTask是路由名字
+    'patrolTask':(context)=>PatrolTaskPage(),//这里注册路由才能跳转,patrolTask是路由名字
     'PatrolTaskDetailsPage': (context) => PatrolTaskDetailsPage(),
     'ProcessExamine':(context) => ProcessExaminePage(),
     'DiseaseReportPage': (context) => DiseaseReportPage(),

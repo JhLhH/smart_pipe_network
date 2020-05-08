@@ -391,9 +391,11 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
       int failCount = 0; // 调用失败次数
       for (int i = 0; i < _sectionCount; i++) {
         Map<String, String> tempMap = sectionMaps[i];
-        Map<String, List<String>> imgMap = sectionImgMaps[i];
         bool isSuccess = await _submitDescribe(tempId, tempMap);
-        bool isSuccessImg = await _submitDescribeImg(tempId, imgMap);
+        if(sectionImgMaps.keys.length > 0) {
+          Map<String, List<String>> imgMap = sectionImgMaps[i];
+          bool isSuccessImg = await _submitDescribeImg(tempId, imgMap);
+        }
         if (isSuccess) {
           successCount++;
         } else {
@@ -403,6 +405,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
       }
 
       if (successCount == _sectionCount) {
+        Fluttertoast.showToast(msg: '提交成功');
           Future.delayed(Duration(seconds: 2), () {
             Navigator.pop(context);
           });

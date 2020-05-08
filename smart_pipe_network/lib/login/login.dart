@@ -96,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
             height: height,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("images/banner.png"), // 把图片换掉
+                image: AssetImage("images/login_bg.png"), // 把图片换掉
                 fit: BoxFit.cover,
               ),
             ),
@@ -123,12 +123,12 @@ class _LoginPageState extends State<LoginPage> {
           textAlign: TextAlign.center,
           text: TextSpan(
               text: '郑州航空港经济综合实验区智慧城管',
-              style: TextStyle(color: Colors.black, fontSize: 18.0),
+              style: TextStyle(color: Colors.white, fontSize: 18.0),
               children: <TextSpan>[
                 TextSpan(
                   text: '\n 智慧管网移动端应用',
                   style: TextStyle(
-                      color: Colors.black,
+                      color: Colors.white,
                       fontSize: 18.0,
                       fontWeight: FontWeight.w500),
                 ),
@@ -149,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
         height: 49,
         decoration: BoxDecoration(
           color: color,
-          border: Border.all(color: Colors.white, width: 1),
+          border: Border.all(color: Colors.transparent, width: 1),
           borderRadius: BorderRadius.circular(24.5),
         ),
         child: Text(
@@ -171,7 +171,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       child: Container(
         decoration:
-            BoxDecoration(border: Border.all(color: Colors.black, width: 1)),
+            BoxDecoration(border: Border.all(color: Colors.white, width: 1),borderRadius: BorderRadius.circular(20)),
         child: TextField(
           controller: _userNameController,
           onChanged: (value) {
@@ -180,16 +180,16 @@ class _LoginPageState extends State<LoginPage> {
             });
           },
           style: TextStyle(
-              fontSize: 15.0, color: Colors.black, fontWeight: FontWeight.w300),
+              fontSize: 15.0, color: Colors.white, fontWeight: FontWeight.w500),
           // 输入文本样式
           decoration: InputDecoration(
               border: InputBorder.none, //去除下划线
               hintText: '输入账号',
-              hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
+              hintStyle: TextStyle(fontSize: 15, color: Colors.white,fontWeight: FontWeight.w500),
               prefixIcon: Icon(
                 Icons.person,
                 size: 30,
-                color: Colors.grey,
+                color: Colors.white,
               )),
         ),
       ),
@@ -206,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         child: Container(
           decoration:
-              BoxDecoration(border: Border.all(color: Colors.black, width: 1)),
+              BoxDecoration(border: Border.all(color: Colors.white, width: 1),borderRadius: BorderRadius.circular(20)),
           child: TextField(
             controller: _passwordController,
             onChanged: (value) {
@@ -216,17 +216,17 @@ class _LoginPageState extends State<LoginPage> {
             },
             style: TextStyle(
                 fontSize: 15.0,
-                color: Colors.black,
-                fontWeight: FontWeight.w300),
+                color: Colors.white,
+                fontWeight: FontWeight.w500),
             // 输入文本样式
             decoration: InputDecoration(
                 border: InputBorder.none, //去除下划线
                 hintText: '输入密码',
-                hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
+                hintStyle: TextStyle(fontSize: 15, color: Colors.white,fontWeight: FontWeight.w500),
                 prefixIcon: Icon(
                   Icons.lock_outline,
                   size: 30,
-                  color: Colors.grey,
+                  color: Colors.white,
                 )),
           ),
         ));

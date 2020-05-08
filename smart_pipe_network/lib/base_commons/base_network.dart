@@ -209,6 +209,51 @@ static Future upDateImage(Map<String,String> params) async {
     }
   }
 
+  /// 开始巡查/结束完成
+  ///
+  ///
+  static Future startOrEnd(String id,Map<String,dynamic> params) async {
+    // 获取本地的token
+    var token = await ShardPreferences.localGet('token');
+
+    String url = BaseUrl.url + '/task/' + id;
+
+    print('token==$token===');
+    try {
+      Map<String, dynamic> httpHeader = {
+        'Authentication': token,
+      };
+      // 配置请求头、超时时长、接受发送类型等信息
+      Response response;
+      BaseOptions option = BaseOptions(
+        connectTimeout: 10000,
+        //服务器链接超时，毫秒
+        receiveTimeout: 3000,
+        // 响应流上前后两次接收到数据的间隔，毫秒
+        headers: httpHeader,
+        // 添加headers,如需设置统一的headers信息也可在此添加
+        contentType: 'application/json',
+        responseType: ResponseType.plain,
+      );
+      print('请求url:$url\n请求参数:$params');
+      Dio dio = Dio(option);
+      response = await dio.put(url, data: params);
+
+      /// 拿到最初的数据用以判断请求是否成功以及失败的msg提示
+      Map<String, dynamic> tempResponse = json.decode(response.data);
+      print('response===${json.decode(response.data)}====');
+      if (tempResponse['ret']) {
+        return true;// 返回一个bool值
+      } else {
+        // 失败提示用户msg信息
+        Fluttertoast.showToast(msg: tempResponse['msg']);
+        return false;
+      }
+    } catch (exception) {
+      Fluttertoast.showToast(msg: '图片上传出错' + exception.toString());
+      return null;
+    }
+  }
 
 
 }

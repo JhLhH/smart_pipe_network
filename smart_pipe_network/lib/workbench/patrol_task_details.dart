@@ -1,5 +1,7 @@
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:smartpipenetwork/base_commons/base_network.dart';
 import 'package:smartpipenetwork/models/undone_task_model_entity.dart';
 import 'disease_report.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -20,6 +22,7 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
   List<String> items;
   bool _isTapStart = false; // 控制按钮颜色和文字变化
   bool _isTapEnd = false; // 控制按钮颜色和文字变化
+  String startTime;
 
   @override
   void initState() {
@@ -171,12 +174,14 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
     return Container(
       padding: EdgeInsets.only(top: 10, bottom: 10),
       child: GestureDetector(
-        onTap: () {
+        onTap: () async {
+          bool isSuccess = await HTTPQuerery.startOrEnd(widget.modelResult.id,
+              {'status': index});
           setState(() {
             if (index == 0 && _isTapStart == false) {
-              _isTapStart = true;
+              _isTapStart = isSuccess;
             } else if (index == 1 && _isTapEnd == false) {
-              _isTapEnd = true;
+              _isTapEnd = isSuccess;
             }
           });
         },
