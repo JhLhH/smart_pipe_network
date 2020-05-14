@@ -1,11 +1,11 @@
-import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:smartpipenetwork/base_commons/base_network.dart';
 import 'package:smartpipenetwork/models/undone_task_model_entity.dart';
 import 'disease_report.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tableview/tableview.dart';
+import 'package:smartpipenetwork/base_commons/base_network.dart';
+
 
 /// 巡查任务未完成详情页面
 class PatrolTaskDetailsPage extends StatefulWidget {
@@ -21,7 +21,7 @@ class PatrolTaskDetailsPage extends StatefulWidget {
 class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
   List<String> items;
   bool _isTapStart = false; // 控制按钮颜色和文字变化
-  bool _isTapEnd = false; // 控制按钮颜色和文字变化
+  String startTitle;
   String startTime;
 
   @override
@@ -37,6 +37,14 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
       '备注：无',
       '巡查路径'
     ];
+    // 判断状态显示标题
+    if(widget.modelResult.status == 0){
+        startTitle = '开始巡查';
+    }else if(widget.modelResult.status == 2){
+        startTitle = '正在巡查';
+    }else if(widget.modelResult.status == 3){
+        startTitle = '暂停中';
+    }
   }
 
   @override
@@ -102,7 +110,7 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
           // 病害上报路由跳转DiseaseReportPage中需要先声明变量taskNum
           Navigator.of(context).push(MaterialPageRoute(builder: (context) {
             return DiseaseReportPage(
-              taskNum: 'RW20191102001',
+              plantId: widget.modelResult.plantId,
             );
           }));
         }
@@ -156,10 +164,8 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _getTopButton(0, _isTapStart ? '正在巡查' : '开始巡查',
-              _isTapStart ? Colors.grey : Colors.lightBlue, context),
-          _getTopButton(1, _isTapEnd ? '已完成' : '完成结束',
-              _isTapEnd ? Colors.grey : Colors.red, context),
+          _getStartButton(context),
+          _getEndButton(context),
         ],
       ),
     );
@@ -170,18 +176,21 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
   /// index 0代表开始巡查 1代表完成结束按钮
   /// text 需要展示的文字
   /// color 背景颜色
-  _getTopButton(int index, String text, Color color, BuildContext context) {
+  _getStartButton(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(top: 10, bottom: 10),
       child: GestureDetector(
         onTap: () async {
           bool isSuccess = await HTTPQuerery.startOrEnd(widget.modelResult.id,
-              {'status': index});
+              {'status': _isTapStart?3:2});
           setState(() {
-            if (index == 0 && _isTapStart == false) {
-              _isTapStart = isSuccess;
-            } else if (index == 1 && _isTapEnd == false) {
-              _isTapEnd = isSuccess;
+            _isTapStart = !_isTapStart;
+            if(startTitle == '开始巡查'){
+              startTitle = '正在巡查';
+            }else if( startTitle == '正在巡查'){
+              startTitle = '暂停中';
+            }else if( startTitle == '暂停中'){
+              startTitle = '正在巡查';
             }
           });
         },
@@ -189,13 +198,43 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
           width: 100,
           height: 40,
           child: Text(
-            text,
+            startTitle,
             style: TextStyle(
                 color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
           ),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-              color: color,
+              color: startTitle == '正在巡查'? Colors.grey:Colors.lightBlue,
+              border: Border.all(color: Colors.white, width: 1),
+              borderRadius: BorderRadius.circular(8)),
+        ),
+      ),
+    );
+  }
+
+
+  _getEndButton(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(top: 10, bottom: 10),
+      child: GestureDetector(
+        onTap: () async {
+          bool isSuccess = await HTTPQuerery.startOrEnd(widget.modelResult.id,
+              {'status': 1});
+          if(isSuccess){
+            Navigator.pop(context);
+          }
+        },
+        child: Container(
+          width: 100,
+          height: 40,
+          child: Text(
+            '完成结束',
+            style: TextStyle(
+                color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+              color: Colors.red,
               border: Border.all(color: Colors.white, width: 1),
               borderRadius: BorderRadius.circular(8)),
         ),

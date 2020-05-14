@@ -25,7 +25,7 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
     setState(() {
       undoneModel = tempUnDoneModel;
       finishedModel = tempFinishedModel;
-      titleTabs = ['未完成(${undoneModel.result.length})', '已完成'];
+      titleTabs = ['未完成(${undoneModel.result.length})', '已完成(${finishedModel.result.length})'];
       _tabController = TabController(length: 2, vsync: this);
     });
   }
@@ -58,19 +58,19 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
         ),
         bottom: titleTabs != null
             ? TabBar(
-                tabs: titleTabs.map((text) => Tab(text: text)).toList(),
-                controller: _tabController,
-              )
+          tabs: titleTabs.map((text) => Tab(text: text)).toList(),
+          controller: _tabController,
+        )
             : null,
       ),
       body: titleTabs != null
           ? TabBarView(controller: _tabController, children: <Widget>[
-              _getUnfinishedWidget(),
-              _getFinishedWidget(),
-            ])
+        _getUnfinishedWidget(),
+        _getFinishedWidget(),
+      ])
           : Center(
-              child: Text('正在加载中...'),
-            ),
+        child: Text('正在加载中...'),
+      ),
     );
   }
 
@@ -87,7 +87,7 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
   Widget _getUnFinishedWidgets(UndoneTaskModelResult undoneTaskModelResult) {
     // 对返回数据做处理
     List<String> item = [
-      undoneTaskModelResult.plantName,
+      undoneTaskModelResult.name,
       '周期：无',
       '起始时间：${undoneTaskModelResult.startTime}至${undoneTaskModelResult.endTime}',
       '安排时间：${undoneTaskModelResult.generateTime}',
@@ -100,7 +100,9 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
             modelResult: undoneTaskModelResult,
             // 传入id
           );
-        }));
+        })).then((data){
+          _getTaskDataSources();
+        });
       },
       child: Stack(
         alignment: Alignment.centerRight,
@@ -119,13 +121,13 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: item
                       .map((text) => Container(
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.fromLTRB(10, 5, 25, 5),
-                            child: Text(
-                              text,
-                              textAlign: TextAlign.left,
-                            ),
-                          ))
+                    alignment: Alignment.centerLeft,
+                    padding: EdgeInsets.fromLTRB(10, 5, 25, 5),
+                    child: Text(
+                      text,
+                      textAlign: TextAlign.left,
+                    ),
+                  ))
                       .toList(),
                 ),
               )
@@ -157,7 +159,7 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
   /// 获取已完成每一个items
   Widget _getFinishedWidgets(FinishedTaskModelEntityResult model) {
     List<String> item = [
-      model.plantName,
+      model.name,
       '周期：无',
       '起始时间：${model.startTime}至${model.endTime}',
       '生成时间：${model.generateTime}',
@@ -180,13 +182,13 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: item
                     .map((text) => Container(
-                          alignment: Alignment.centerLeft,
-                          padding: EdgeInsets.fromLTRB(10, 5, 30, 5),
-                          child: Text(
-                            text,
-                            textAlign: TextAlign.left,
-                          ),
-                        ))
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.fromLTRB(10, 5, 30, 5),
+                  child: Text(
+                    text,
+                    textAlign: TextAlign.left,
+                  ),
+                ))
                     .toList(),
               ),
             )

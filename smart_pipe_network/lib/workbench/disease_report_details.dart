@@ -29,10 +29,10 @@ class _DiseaseDetailsPageState extends State<DiseaseDetailsPage> {
 
   _getDetails() async {
     DescribeDetailEntity tempModel =
-        await TaskNetWorkQuery.describeDetail({'id': widget.diseaseId});
+    await TaskNetWorkQuery.describeDetail({'id': widget.diseaseId});
     DetailesImagesEntity imagesEntity =
-        await TaskNetWorkQuery.describeDetailImages(
-            {'refBizId': widget.diseaseId});
+    await TaskNetWorkQuery.describeDetailImages(
+        {'refBizId': widget.diseaseId});
     setState(() {
       model = tempModel;
       imagesEntity.result.forEach((res) {
@@ -123,21 +123,21 @@ class _DiseaseDetailsPageState extends State<DiseaseDetailsPage> {
   _getAddPhotoWidget() {
     return images != null
         ? Column(
-            children: [
-              Container(
-                padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "现场照片:",
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
-              PhotosGridView(
-                imageUrls: images,
-                photosType: PhotosType.show,
-              ),
-            ],
-          )
+      children: [
+        Container(
+          padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+          alignment: Alignment.centerLeft,
+          child: Text(
+            "现场照片:",
+            style: TextStyle(fontSize: 18),
+          ),
+        ),
+        PhotosGridView(
+          imageUrls: images,
+          photosType: PhotosType.show,
+        ),
+      ],
+    )
         : Text('');
   }
 
@@ -145,8 +145,8 @@ class _DiseaseDetailsPageState extends State<DiseaseDetailsPage> {
   _getHeaderView(BuildContext context) {
     return model != null
         ? Column(
-            children: _headerCell(context),
-          )
+      children: _headerCell(context),
+    )
         : Text('');
   }
 

@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
     var model = await LoginNetWorkQuery.login(params);
     if (model != null) {
       // 登录成功
-      runApp(RootWidgetPage());
+      runApp(RootWidgetPage(loginModelEntity: model,));
     }
   }
 
@@ -96,19 +96,19 @@ class _LoginPageState extends State<LoginPage> {
             height: height,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("images/login_bg.png"), // 把图片换掉
+                image: AssetImage("images/login-bg@2x.png"), // 把图片换掉
                 fit: BoxFit.cover,
               ),
             ),
             child: SafeArea(
                 child: Column(
-              children: [
-                _getRichText(),
-                _getUserNameTextField(),
-                _getPasswordTextField(),
-                _getButton(context, '登  录', Colors.blue), // 获取登录按钮
-              ],
-            )),
+                  children: [
+                    _getRichText(),
+                    _getUserNameTextField(),
+                    _getPasswordTextField(),
+                    _getButton(context, '登  录', Colors.blue), // 获取登录按钮
+                  ],
+                )),
           ),
         ),
       ),
@@ -171,7 +171,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       child: Container(
         decoration:
-            BoxDecoration(border: Border.all(color: Colors.white, width: 1),borderRadius: BorderRadius.circular(20)),
+        BoxDecoration(border: Border.all(color: Colors.white, width: 1),borderRadius: BorderRadius.circular(20)),
         child: TextField(
           controller: _userNameController,
           onChanged: (value) {
@@ -206,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         child: Container(
           decoration:
-              BoxDecoration(border: Border.all(color: Colors.white, width: 1),borderRadius: BorderRadius.circular(20)),
+          BoxDecoration(border: Border.all(color: Colors.white, width: 1),borderRadius: BorderRadius.circular(20)),
           child: TextField(
             controller: _passwordController,
             onChanged: (value) {

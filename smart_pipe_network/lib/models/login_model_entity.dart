@@ -7,7 +7,8 @@ class LoginModelEntity with JsonConvert<LoginModelEntity> {
 }
 
 class LoginModelResult with JsonConvert<LoginModelResult> {
-	List<String> permissions;
+	List<String> appPermissions;
+	List<dynamic> permissions;
 	List<String> roles;
 	String exipreTime;
 	LoginModelResultConfig config;
@@ -38,7 +39,7 @@ class LoginModelResultUser with JsonConvert<LoginModelResultUser> {
 	dynamic modifyTime;
 	String lastLoginTime;
 	String ssex;
-	String description;
+	dynamic description;
 	String avatar;
 	String realName;
 	String roleId;

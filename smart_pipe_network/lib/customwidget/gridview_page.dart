@@ -6,7 +6,7 @@ class GridViewPage extends StatefulWidget {
   List<String> titles = [];
 
   /// 每个Item要展示的Icon
-  List<IconData> iconDatas = [];
+  List<AssetImage> iconDatas = [];
 
   /// 路由名字每一个Item对应跳转的界面路由
   /// key值为titles中的元素，value为路由名字
@@ -42,29 +42,31 @@ class _GridViewPageState extends State<GridViewPage> {
     return items;
   }
 
-  Widget _getItemContainer(BuildContext context, String title, IconData icon) {
+  Widget _getItemContainer(BuildContext context, String title, AssetImage icon) {
     return GestureDetector(
       onTap: () {
         if (widget.routeNames != null && widget.routeNames[title] != null) {
           print('当前点击$title Item');
           if (title == '病害工单') {
             _pushParameterWidgetPage(
-                context, 'http://dev.hn.hadutech.com/94/desease/', title);
+              //http://117.159.24.4:30082/spList/index.html#/
+              //http://dev.hn.hadutech.com/94
+                context, 'http://117.159.24.4:30082/desease/index.html#/', title);
           } else if (title == '流程审批') {
             _pushParameterWidgetPage(
-                context, 'http://dev.hn.hadutech.com/94/spList/', title);
+                context, 'http://117.159.24.4:30082/spList/index.html#/', title);
           } else if (title == '汛情巡查') {
             _pushParameterWidgetPage(
-                context, 'http://dev.hn.hadutech.com/94/floodInspection/', title);
+                context, 'http://117.159.24.4:30082/floodInspection/index.html#/', title);
           } else if (title == '汛情上报') {
             _pushParameterWidgetPage(
-                context, 'http://dev.hn.hadutech.com/94/floodTask/', title);
+                context, 'http://117.159.24.4:30082/floodTask/index.html#/', title);
           } else if (title == '汛情处理') {
             _pushParameterWidgetPage(context,
-                'http://dev.hn.hadutech.com/94/floodManage/', title);
+                'http://117.159.24.4:30082/floodManage/index.html#/', title);
           } else if (title == '病害查看') {
             _pushParameterWidgetPage(context,
-                'http://dev.hn.hadutech.com/94/deseaseList/', title);
+                'http://117.159.24.4:30082/deseaseList/index.html#/', title);
           } else {
             Navigator.pushNamed(context, widget.routeNames[title]);
           }
@@ -77,10 +79,8 @@ class _GridViewPageState extends State<GridViewPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(
-              icon,
-              color: Colors.blue,
-              size: 30.0,
+            Image(
+              image: icon,
             ),
             Padding(
               padding: EdgeInsets.only(top: 5),

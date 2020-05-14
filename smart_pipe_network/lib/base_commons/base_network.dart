@@ -7,7 +7,9 @@ import 'base_shared_preferences.dart';
 
 class BaseUrl {
   // 配置默认请求地址
-  static const String url = 'http://dev.hn.hadutech.com/94/zzxg_server';
+  //http://117.159.24.4:38101/zzxg_server
+  //http://dev.hn.hadutech.com/94/zzxg_server
+  static const String url = 'http://117.159.24.4:38101/zzxg_server';
 }
 
 class HTTPQuerery {
@@ -94,7 +96,7 @@ class HTTPQuerery {
           '请求的参数:$params');
       Dio dio = Dio(option);
       if (method == 'get') {
-        response = await dio.get(url,queryParameters: params);
+        response = await dio.get(url, queryParameters: params);
       } else {
         response = await dio.post(url, data: params);
       }
@@ -139,11 +141,10 @@ class HTTPQuerery {
         responseType: ResponseType.plain,
       );
 
-      var name = file.path.substring(file.path.lastIndexOf("/") + 1, file.path.length);
-      var postData = FormData.fromMap({
-        "file": await MultipartFile.fromFile(
-            file.path, filename: name)
-      });
+      var name =
+          file.path.substring(file.path.lastIndexOf("/") + 1, file.path.length);
+      var postData = FormData.fromMap(
+          {"file": await MultipartFile.fromFile(file.path, filename: name)});
 
       Dio dio = Dio(option);
       response = await dio.post(url, data: postData);
@@ -153,7 +154,7 @@ class HTTPQuerery {
       print('response===${json.decode(response.data)}====');
       if (tempResponse['ret']) {
         // 成功
-        Map<String,dynamic> result = tempResponse['result'];
+        Map<String, dynamic> result = tempResponse['result'];
         return result['id'];
       } else {
         // 失败提示用户msg信息
@@ -166,7 +167,7 @@ class HTTPQuerery {
     }
   }
 
-static Future upDateImage(Map<String,String> params) async {
+  static Future upDateImage(Map<String, String> params) async {
     // 获取本地的token
     var token = await ShardPreferences.localGet('token');
 
@@ -197,7 +198,7 @@ static Future upDateImage(Map<String,String> params) async {
       Map<String, dynamic> tempResponse = json.decode(response.data);
       print('response===${json.decode(response.data)}====');
       if (tempResponse['ret']) {
-        return true;// 返回一个bool值
+        return true; // 返回一个bool值
       } else {
         // 失败提示用户msg信息
         Fluttertoast.showToast(msg: tempResponse['msg']);
@@ -212,7 +213,7 @@ static Future upDateImage(Map<String,String> params) async {
   /// 开始巡查/结束完成
   ///
   ///
-  static Future startOrEnd(String id,Map<String,dynamic> params) async {
+  static Future startOrEnd(String id, Map<String, dynamic> params) async {
     // 获取本地的token
     var token = await ShardPreferences.localGet('token');
 
@@ -243,7 +244,7 @@ static Future upDateImage(Map<String,String> params) async {
       Map<String, dynamic> tempResponse = json.decode(response.data);
       print('response===${json.decode(response.data)}====');
       if (tempResponse['ret']) {
-        return true;// 返回一个bool值
+        return true; // 返回一个bool值
       } else {
         // 失败提示用户msg信息
         Fluttertoast.showToast(msg: tempResponse['msg']);
@@ -255,5 +256,41 @@ static Future upDateImage(Map<String,String> params) async {
     }
   }
 
+  /// 获取逆向地理坐标
+  ///
+  /// 参数传入经纬度 例如113.827833,34.534043
+  static Future getLocationRequest(String location) async {
+    String url =
+        'https://restapi.amap.com/v3/geocode/regeo?output=JSON&location=$location&key=36cd36f0b1f302d9c2392a1313d5bfa3&radius=10&extensions=base';
+    try {
+      // 配置请求头、超时时长、接受发送类型等信息
+      Response response;
+      BaseOptions option = BaseOptions(
+        connectTimeout: 10000,
+        //服务器链接超时，毫秒
+        receiveTimeout: 3000,
+        // 响应流上前后两次接收到数据的间隔，毫秒
 
+        contentType: 'application/json',
+        responseType: ResponseType.plain,
+      );
+      Dio dio = Dio(option);
+
+      response = await dio.get(url);
+
+      /// 拿到最初的数据用以判断钱请求是否成功以及失败的msg提示
+      Map<String, dynamic> tempResponse = json.decode(response.data);
+      print('response===${json.decode(response.data)}====');
+      if (tempResponse['status'] == '1') {
+        // 成功
+        return response.data;
+      } else {
+        // 失败提示用户msg信息
+        Fluttertoast.showToast(msg: tempResponse['msg']);
+        return null;
+      }
+    } catch (exception) {
+      return '数据请求错误' + exception.toString();
+    }
+  }
 }

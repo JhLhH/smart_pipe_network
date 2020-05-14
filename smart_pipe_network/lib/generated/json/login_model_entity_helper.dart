@@ -24,8 +24,12 @@ Map<String, dynamic> loginModelEntityToJson(LoginModelEntity entity) {
 }
 
 loginModelResultFromJson(LoginModelResult data, Map<String, dynamic> json) {
+	if (json['appPermissions'] != null) {
+		data.appPermissions = json['appPermissions']?.map((v) => v?.toString())?.toList()?.cast<String>();
+	}
 	if (json['permissions'] != null) {
-		data.permissions = json['permissions']?.map((v) => v?.toString())?.toList()?.cast<String>();
+		data.permissions = new List<dynamic>();
+		data.permissions.addAll(json['permissions']);
 	}
 	if (json['roles'] != null) {
 		data.roles = json['roles']?.map((v) => v?.toString())?.toList()?.cast<String>();
@@ -47,7 +51,10 @@ loginModelResultFromJson(LoginModelResult data, Map<String, dynamic> json) {
 
 Map<String, dynamic> loginModelResultToJson(LoginModelResult entity) {
 	final Map<String, dynamic> data = new Map<String, dynamic>();
-	data['permissions'] = entity.permissions;
+	data['appPermissions'] = entity.appPermissions;
+	if (entity.permissions != null) {
+		data['permissions'] =  [];
+	}
 	data['roles'] = entity.roles;
 	data['exipreTime'] = entity.exipreTime;
 	if (entity.config != null) {
@@ -135,7 +142,7 @@ loginModelResultUserFromJson(LoginModelResultUser data, Map<String, dynamic> jso
 		data.ssex = json['ssex']?.toString();
 	}
 	if (json['description'] != null) {
-		data.description = json['description']?.toString();
+		data.description = json['description'];
 	}
 	if (json['avatar'] != null) {
 		data.avatar = json['avatar']?.toString();

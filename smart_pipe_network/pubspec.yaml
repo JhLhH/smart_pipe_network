@@ -39,8 +39,16 @@ dependencies:
   cupertino_icons: ^0.1.2
   # 屏幕适配
   flutter_screenutil: ^1.1.0
-  # 自定义组件用于病害上报界面
+  # 获取权限
+  permission_handler: ^4.4.0
+  # 高德定位
+  amap_location: ^0.2.0
+  # 地理坐标转码
+  amap_search_fluttify: ^0.8.2+1
 
+  easy_alert: ^0.0.8
+
+  # 自定义组件用于病害上报界面
   tableview:
     git:
       url: https://github.com/wya-team/flutter_wya.git

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartpipenetwork/base_commons/base_shared_preferences.dart';
 
@@ -16,6 +15,7 @@ class ProcessExaminePage extends StatefulWidget {
 }
 
 class _ProcessExaminePage extends State<ProcessExaminePage> {
+
   String tokenStr;
 
   _getToken() async {
@@ -24,16 +24,17 @@ class _ProcessExaminePage extends State<ProcessExaminePage> {
       tokenStr = tempToken;
     });
   }
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _getToken();
   }
 
+
   @override
+
   Widget build(BuildContext context) {
+    _getToken();
     return WebviewScaffold(
       appBar: AppBar(
         title: Text(widget.title),

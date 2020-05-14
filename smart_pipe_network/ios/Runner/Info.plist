@@ -2,6 +2,23 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <!-- 位置 -->
+
+    <key>NSLocationUsageDescription</key>
+
+    <string>需要您的同意, APP才能访问位置</string>
+
+    <!-- 在使用期间访问位置 -->
+
+    <key>NSLocationWhenInUseUsageDescription</key>
+
+    <string>App需要您的同意, APP才能在使用期间访问位置</string>
+
+    <!-- 始终访问位置 -->
+
+    <key>NSLocationAlwaysUsageDescription</key>
+
+    <string>App需要您的同意, APP才能始终访问位置</string>
     <!-- 相册 -->
     <key>NSPhotoLibraryUsageDescription</key>
     <string>App需要您的同意,才能访问相册</string>

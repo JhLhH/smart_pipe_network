@@ -15,8 +15,8 @@ class PhotosGridView extends StatefulWidget {
 
   PhotosGridView(
       {this.imageUrls,
-      this.photosType = PhotosType.edit,
-      this.photosOnChanged});
+        this.photosType = PhotosType.edit,
+        this.photosOnChanged});
 
   @override
   PhotosGridViewState createState() => PhotosGridViewState();
@@ -182,9 +182,9 @@ class PhotosGridViewState extends State<PhotosGridView> {
 
   /// 底部弹框的每一行widget
   _getAlertSheetItem(
-    BuildContext context,
-    int index,
-  ) {
+      BuildContext context,
+      int index,
+      ) {
     double width = MediaQuery.of(context).size.width;
     return RaisedButton(
       onPressed: () {
@@ -206,7 +206,10 @@ class PhotosGridViewState extends State<PhotosGridView> {
   /// 获取图片相机/相册
   Future getImage(ImageSource source) async {
     File image = await ImagePicker.pickImage(source: source);
-    String id = await HTTPQuerery.upload(image);
+    String id;
+    if(image != null){
+      id = await HTTPQuerery.upload(image);
+    }
     setState(() {
       Navigator.pop(context);
       if (id.isNotEmpty) {

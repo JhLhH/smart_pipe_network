@@ -11,10 +11,10 @@ import 'package:smartpipenetwork/customwidget/photos_gridview.dart';
 /// 巡查任务未完成详情页面
 class DiseaseReportPage extends StatefulWidget {
   // 导航栏标题传入上个界面传入
-  final String taskNum;
+  final String plantId;
 
   // 构造方法必须写，在_DiseaseReportPageState中使用方式widget.taskNum
-  DiseaseReportPage({this.taskNum});
+  DiseaseReportPage({this.plantId});
 
   @override
   _DiseaseReportPageState createState() => _DiseaseReportPageState();
@@ -47,11 +47,12 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
 
   /// 分组
   Map<int, Map<String, String>> sectionMaps = {};
+  Map<int, Map<String, String>> locationMaps = {};
   Map<int, Map<String, List<String>>> sectionImgMaps = {};
 
   _getDiseaseWayModel() async {
     DiseaseWayModelEntityEntity tempModel =
-        await DiseaseReportNetWorkQuery.diseaseWay();
+        await DiseaseReportNetWorkQuery.diseaseWay('');
     setState(() {
       model = tempModel;
       tempModel.result.forEach((res) {
@@ -89,9 +90,6 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
   // 统一验证输入框内容
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  // 获取选择得到的照片
-  final GlobalKey<PhotosGridViewState> _photoKey =
-      GlobalKey<PhotosGridViewState>();
   int _sectionCount = 1;
 
   @override
@@ -236,9 +234,33 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
                 });
               } else {
                 setState(() {
-                  sectionMaps.addAll({
-                    section: {prefixText: value}
-                  });
+                  Map<String, String> tempMap = {prefixText: value};
+                  sectionMaps.addAll({section: tempMap});
+                });
+              }
+            },
+            customTextFieldLocation: (prefixText, value) {
+              // 是否包含该key值，使用section分组来标识唯一的分组值
+              // 若包含该key值就去更新，不存在就去新建
+              if (sectionMaps.keys.contains(section)) {
+                // 存储输入值的Map
+                Map<String, String> tempMap = sectionMaps[section];
+                // 判断是否存在该key值
+                if (tempMap.keys.contains(prefixText)) {
+                  // 存在去更新
+                  tempMap[prefixText] = value;
+                } else {
+                  // 不存在去创建
+                  tempMap.addAll({prefixText: value});
+                }
+                // 创建完毕或更新完毕去替换原本的值
+                setState(() {
+                  sectionMaps[section] = tempMap;
+                });
+              } else {
+                setState(() {
+                  Map<String, String> tempMap = {prefixText: value};
+                  sectionMaps.addAll({section: tempMap});
                 });
               }
             },
@@ -391,11 +413,12 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
       int failCount = 0; // 调用失败次数
       for (int i = 0; i < _sectionCount; i++) {
         Map<String, String> tempMap = sectionMaps[i];
-        bool isSuccess = await _submitDescribe(tempId, tempMap);
-        if(sectionImgMaps.keys.length > 0) {
-          Map<String, List<String>> imgMap = sectionImgMaps[i];
-          bool isSuccessImg = await _submitDescribeImg(tempId, imgMap);
+        Map<String, List<String>> imgMap;
+        if (sectionImgMaps.keys.length > 0) {
+          imgMap = sectionImgMaps[i];
         }
+        bool isSuccess = await _submitDescribe(tempId, tempMap,
+            imgMaps: imgMap != null ? imgMap : null);
         if (isSuccess) {
           successCount++;
         } else {
@@ -406,14 +429,15 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
 
       if (successCount == _sectionCount) {
         Fluttertoast.showToast(msg: '提交成功');
-          Future.delayed(Duration(seconds: 2), () {
-            Navigator.pop(context);
-          });
+        Future.delayed(Duration(seconds: 2), () {
+          Navigator.pop(context);
+        });
       }
     }
   }
 
-  _submitDescribe(String diseaseId, Map<String, String> describeMap) async {
+  _submitDescribe(String diseaseId, Map<String, String> describeMap,
+      {Map<String, List<String>> imgMaps}) async {
     Map<String, dynamic> params = {
       'refDisease': diseaseId, // 病害关联ID
       'type': describeMap['病害种类：'],
@@ -427,26 +451,31 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     String describeId =
         await DiseaseReportNetWorkQuery.diseaseDescribe(params: params);
     if (describeId.isNotEmpty) {
-      return true;
+      if (imgMaps == null) {
+        return true;
+      } else {
+        bool result = await _submitDescribeImg(describeId, imgMaps);
+        return result;
+      }
     }
     return false;
   }
 
   _submitDescribeImg(
-      String diseaseId, Map<String, List<String>> imgMaps) async {
+      String describeId, Map<String, List<String>> imgMaps) async {
     // 获取图片id
     List<String> imageIds = imgMaps['上传图片'];
     // 拼接图片id
     String ids = '';
     imageIds.forEach((value) {
-      if(ids == ''){
+      if (ids == '') {
         ids = '$value';
-      }else{
+      } else {
         ids = '$ids,$value';
       }
     });
-    bool result = await HTTPQuerery.upDateImage(
-        {'refBizId': diseaseId, 'ids': ids});
+    bool result =
+        await HTTPQuerery.upDateImage({'refBizId': describeId, 'ids': ids});
     return result;
   }
 }

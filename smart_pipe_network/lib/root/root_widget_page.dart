@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartpipenetwork/electronicmap/home_map.dart';
+import 'package:smartpipenetwork/models/login_model_entity.dart';
 import 'package:smartpipenetwork/process_examine/process_exmine.dart';
 import 'package:smartpipenetwork/systemsetting/system_setting.dart';
 import 'package:smartpipenetwork/workbench/patrol_task.dart';
@@ -7,7 +8,13 @@ import 'package:smartpipenetwork/workbench/workbench.dart';
 import 'package:smartpipenetwork/workbench/patrol_task_details.dart';
 import 'package:smartpipenetwork/workbench/disease_report.dart';
 import 'package:smartpipenetwork/workbench/disease_report_details.dart';
+import 'package:smartpipenetwork/login/login.dart';
+
+
 class RootWidgetPage extends StatefulWidget {
+  final LoginModelEntity loginModelEntity;
+
+  const RootWidgetPage({Key key, this.loginModelEntity}) : super(key: key);
   @override
   _RootWidgetPageState createState() => _RootWidgetPageState();
 }
@@ -33,9 +40,8 @@ class _RootWidgetPageState extends State<RootWidgetPage> {
     'PatrolTaskDetailsPage': (context) => PatrolTaskDetailsPage(),
     'ProcessExamine':(context) => ProcessExaminePage(),
     'DiseaseReportPage': (context) => DiseaseReportPage(),
-    'DiseaseDetailsPage':(context) =>DiseaseDetailsPage(),
-
-
+    'DiseaseDetailsPage':(context) => DiseaseDetailsPage(),
+    'LoginPage':(context) => LoginPage(),
   };// 这里没写路由
 
   changeIndex(int index) {
@@ -44,16 +50,8 @@ class _RootWidgetPageState extends State<RootWidgetPage> {
     });
   }
 
-  initData() {
-    _body = IndexedStack(
-      children: <Widget>[HomeMapPage(), WorkBenchPage(), SystemSettingPage()],
-      index: _currentIndex,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    initData();
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -67,10 +65,19 @@ class _RootWidgetPageState extends State<RootWidgetPage> {
           selectedItemColor: Colors.blue,
           unselectedItemColor: Colors.grey,
         ),
-        body: _body,
+        body: _getBody(),
       ),
       routes: routes,
     );
+  }
+
+  _getBody(){
+    if(_currentIndex == 0){
+      return HomeMapPage();
+    } if(_currentIndex == 1){
+      return WorkBenchPage(loginModelEntity: widget.loginModelEntity,);
+    }
+    return SystemSettingPage();
   }
 
   List<BottomNavigationBarItem> _getBottomNavigatorItems() {

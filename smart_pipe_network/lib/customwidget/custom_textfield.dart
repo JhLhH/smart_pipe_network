@@ -1,14 +1,27 @@
+import 'dart:convert';
+
 import 'package:date_format/date_format.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:smartpipenetwork/customwidget/dropdown_widget.dart';
+import 'package:amap_location/amap_location.dart';
+import 'package:smartpipenetwork/models/disease_report_network_query.dart';
+import 'package:smartpipenetwork/models/location_model_entity.dart';
 
 enum SuffixIconStyle { normal, dropdown, location, date }
+
 /// 当输入框值发生变化的时候回调
 ///
 /// hintText 左侧的固定文字用来判断是哪一个输入框
 /// value 输入的值
-typedef CustomTextFieldOnChanged = void Function(String prefixText, String value);
+typedef CustomTextFieldOnChanged = void Function(
+    String prefixText, String value);
+
+/// 获取位置回调
+typedef CustomTextFieldLocation = void Function(
+    String prefixText, String locValue);
 
 class CustomTextField extends StatefulWidget {
   /// 占位文字
@@ -30,6 +43,9 @@ class CustomTextField extends StatefulWidget {
   final SuffixIconStyle suffixIconStyle;
 
   final CustomTextFieldOnChanged customTextFieldOnChanged;
+
+  final CustomTextFieldLocation customTextFieldLocation;
+
   /// 默认值
   final String defaultText;
 
@@ -40,7 +56,10 @@ class CustomTextField extends StatefulWidget {
       this.onChanged,
       this.suffixIconStyle = SuffixIconStyle.normal,
       this.onPressed,
-      this.dropdownDataSources, this.customTextFieldOnChanged, this.defaultText});
+      this.dropdownDataSources,
+      this.customTextFieldOnChanged,
+      this.defaultText,
+      this.customTextFieldLocation});
 
   @override
   _CustomTextFieldState createState() => _CustomTextFieldState();
@@ -48,6 +67,8 @@ class CustomTextField extends StatefulWidget {
 
 class _CustomTextFieldState extends State<CustomTextField> {
   TextEditingController controller = TextEditingController();
+  AMapLocation _loc; // 定位返回数据
+  LocationModelEntity locationModel;
 
   @override
   void initState() {
@@ -58,7 +79,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
     }
     super.initState();
     controller.addListener(() {
-      widget.customTextFieldOnChanged(widget.prefixText,controller.text);
+      if(widget.prefixText == '病害位置：'){
+        Map<String, String> map = {
+          'name': locationModel.regeocode.addressComponent.township,
+          'point': '[${_loc.longitude},${_loc.latitude}]'
+        };
+        widget.customTextFieldLocation(widget.prefixText,json.encode(map));
+      }else {
+        widget.customTextFieldOnChanged(widget.prefixText, controller.text);
+      }
     });
   }
 
@@ -116,7 +145,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
         validator: (value) {
           if (value.isEmpty) {
-            return widget.hintText;
+              return widget.hintText;
           }
           return null;
         },
@@ -141,10 +170,16 @@ class _CustomTextFieldState extends State<CustomTextField> {
             Icons.room,
             color: Colors.blue,
           ),
-          onPressed: () {
-            // 定位按钮点击事件
-            setState(() {
-              controller.text = '位置输入完成';
+          onPressed: () async {
+           AMapLocation location = await _getLocation();
+           LocationModelEntity tempModel =
+           await DiseaseReportNetWorkQuery.getLocation(
+               '${location.longitude},${location.latitude}');
+           String text  = tempModel.regeocode.formattedAddress;
+           setState(() {
+              locationModel = tempModel;
+              _loc = location;
+              controller.text = text;
             });
           });
     }
@@ -163,5 +198,17 @@ class _CustomTextFieldState extends State<CustomTextField> {
           });
     }
     return Text('');
+  }
+
+  _getLocation() async {
+    //先启动一下
+    await AMapLocationClient.startup(new AMapLocationOption(
+        desiredAccuracy: CLLocationAccuracy.kCLLocationAccuracyHundredMeters));
+    //直接获取定位
+    AMapLocation location = await AMapLocationClient.getLocation(true);
+    if (location != null) {
+     return location;
+    }
+    return null;
   }
 }
