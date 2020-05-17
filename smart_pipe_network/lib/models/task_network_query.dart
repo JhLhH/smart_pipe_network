@@ -13,7 +13,7 @@ import 'dart:convert';
 
 class TaskNetWorkQuery {
 
-  static Future unDoneTask() async {
+  static Future<UndoneTaskModelEntity> unDoneTask() async {
     var data = await HTTPQuerery.get(undoneTaskUrl);
     try {
       // 解析json数据
@@ -27,7 +27,7 @@ class TaskNetWorkQuery {
     }
   }
 
-  static Future finishedTask() async {
+  static Future<FinishedTaskModelEntityEntity> finishedTask() async {
     var data = await HTTPQuerery.get(finishedTaskUrl);
     try {
       // 解析json数据

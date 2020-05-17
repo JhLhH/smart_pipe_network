@@ -14,22 +14,23 @@ class PatrolTaskPage extends StatefulWidget {
 class _PatrolTaskPageState extends State<PatrolTaskPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-
-  UndoneTaskModelEntity undoneModel;
-
-  FinishedTaskModelEntityEntity finishedModel;
-
   List<String> titleTabs;
 
-  _getTaskDataSources() async {
-    undoneModel = null;
-    finishedModel = null;
-    var tempUnDoneModel = await TaskNetWorkQuery.unDoneTask();
-    var tempFinishedModel = await TaskNetWorkQuery.finishedTask();
+  List<UndoneTaskModelResult> undoneDataSources;
+  List<FinishedTaskModelEntityResult> finishedDataSources;
+
+ Future _getTaskDataSources() async {
+    UndoneTaskModelEntity tempUnDoneModel = await TaskNetWorkQuery.unDoneTask();
+    FinishedTaskModelEntityEntity tempFinishedModel = await TaskNetWorkQuery.finishedTask();
     setState(() {
-      undoneModel = tempUnDoneModel;
-      finishedModel = tempFinishedModel;
-      titleTabs = ['未完成(${undoneModel.result.length})', '已完成(${finishedModel.result.length})'];
+      if(undoneDataSources != null){
+        undoneDataSources.clear();
+      }if(finishedDataSources != null){
+        finishedDataSources.clear();
+      }
+      undoneDataSources = tempUnDoneModel.result;
+      finishedDataSources = tempFinishedModel.result;
+      titleTabs = ['未完成(${undoneDataSources.length})', '已完成(${finishedDataSources.length})'];
       _tabController = TabController(length: 2, vsync: this);
     });
   }
@@ -48,12 +49,7 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
     super.dispose();
   }
 
-  @override
-  void reassemble() {
-    // TODO: implement reassemble
-    super.reassemble();
-    _getTaskDataSources();
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -76,8 +72,8 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
       ),
       body: titleTabs != null
           ? TabBarView(controller: _tabController, children: <Widget>[
-        _getUnfinishedWidget(),
-        _getFinishedWidget(),
+        _getUnfinishedWidget(context),
+        _getFinishedWidget(context),
       ])
           : Center(
         child: Text('正在加载中...'),
@@ -86,11 +82,11 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
   }
 
   /// 未完成
-  Widget _getUnfinishedWidget() {
+  Widget _getUnfinishedWidget(BuildContext context) {
     return ListView.builder(
-        itemCount: undoneModel != null ? undoneModel.result.length : 0,
+        itemCount: undoneDataSources != null ? undoneDataSources.length : 0,
         itemBuilder: (BuildContext context, int index) {
-          return _getUnFinishedWidgets(undoneModel.result[index]);
+          return _getUnFinishedWidgets(undoneDataSources[index]);
         });
   }
 
@@ -159,11 +155,11 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
   }
 
   /// 已完成界面的widget获取
-  _getFinishedWidget() {
+  _getFinishedWidget(BuildContext context) {
     return ListView.builder(
-        itemCount: finishedModel != null ? finishedModel.result.length : 0,
+        itemCount: finishedDataSources != null ? finishedDataSources.length : 0,
         itemBuilder: (BuildContext context, int index) {
-          return _getFinishedWidgets(finishedModel.result[index]);
+          return _getFinishedWidgets(finishedDataSources[index]);
         });
   }
 
