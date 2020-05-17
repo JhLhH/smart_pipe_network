@@ -58,8 +58,8 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
 //      '备注：无',
       '巡查路径'
     ];
-    _getDiseaseWayModel();
-    _postLocation();
+//    _getDiseaseWayModel();
+//    _postLocation();
   }
 
   Future _postLocation()async{
