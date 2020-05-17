@@ -23,21 +23,23 @@ class DiseaseReportNetWorkQuery {
     }
   }
 
-  static Future diseaseDescribe({Map<String, dynamic>params}) async {
-    var data = await HTTPQuerery.post(describeUrl,params: params);
-    try {
-      // 解析json数据
-      Map<String,dynamic> response = json.decode(data);
-      Map<String,dynamic> result = response['result'];
-      // 返回病害id
-      return result['id'];
-    } catch (error) {
-      print('error------$error------');
-      Fluttertoast.showToast(msg: '上传数据出错');
-      return null;
-    }
-  }
+  /// 病害描述(弃用)
+//  static Future diseaseDescribe({Map<String, dynamic>params}) async {
+//    var data = await HTTPQuerery.post(describeUrl,params: params);
+//    try {
+//      // 解析json数据
+//      Map<String,dynamic> response = json.decode(data);
+//      Map<String,dynamic> result = response['result'];
+//      // 返回病害id
+//      return result['id'];
+//    } catch (error) {
+//      print('error------$error------');
+//      Fluttertoast.showToast(msg: '上传数据出错');
+//      return null;
+//    }
+//  }
 
+  /// 获取道路信息
   static Future diseaseWay(String plantId) async {
     var data = await HTTPQuerery.get(diseaseWayUrl + plantId);
     try {
@@ -52,6 +54,7 @@ class DiseaseReportNetWorkQuery {
     }
   }
 
+  /// 获取位置
   static Future getLocation(String location) async {
     var data = await HTTPQuerery.getLocationRequest(location);
     try {

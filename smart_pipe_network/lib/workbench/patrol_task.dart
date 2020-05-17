@@ -19,7 +19,11 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
 
   FinishedTaskModelEntityEntity finishedModel;
 
+  List<String> titleTabs;
+
   _getTaskDataSources() async {
+    undoneModel = null;
+    finishedModel = null;
     var tempUnDoneModel = await TaskNetWorkQuery.unDoneTask();
     var tempFinishedModel = await TaskNetWorkQuery.finishedTask();
     setState(() {
@@ -30,7 +34,7 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
     });
   }
 
-  List<String> titleTabs;
+
 
   @override
   void initState() {
@@ -42,6 +46,13 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  @override
+  void reassemble() {
+    // TODO: implement reassemble
+    super.reassemble();
+    _getTaskDataSources();
   }
 
   @override
@@ -88,7 +99,7 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
     // 对返回数据做处理
     List<String> item = [
       undoneTaskModelResult.name,
-      '周期：无',
+      '周期：${undoneTaskModelResult.taskPeriod}',
       '起始时间：${undoneTaskModelResult.startTime}至${undoneTaskModelResult.endTime}',
       '安排时间：${undoneTaskModelResult.generateTime}',
       '备注:${undoneTaskModelResult.memo}'
@@ -101,7 +112,7 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
             // 传入id
           );
         })).then((data){
-          _getTaskDataSources();
+            _getTaskDataSources();
         });
       },
       child: Stack(
@@ -160,7 +171,7 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
   Widget _getFinishedWidgets(FinishedTaskModelEntityResult model) {
     List<String> item = [
       model.name,
-      '周期：无',
+      '周期：${model.taskPeriod}',
       '起始时间：${model.startTime}至${model.endTime}',
       '生成时间：${model.generateTime}',
       '结束时间:${model.endTime}'
@@ -200,10 +211,10 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
           child: Column(
             children: [
               _getFinishedRightButton(0, '轨迹查看', Icons.share),
-              Padding(
-                padding: EdgeInsets.only(top: 10),
-                child: _getFinishedRightButton(1, '病害详情', Icons.business),
-              ),
+//              Padding(
+//                padding: EdgeInsets.only(top: 10),
+//                child: _getFinishedRightButton(1, '病害详情', Icons.business),
+//              ),
             ],
           ),
         )

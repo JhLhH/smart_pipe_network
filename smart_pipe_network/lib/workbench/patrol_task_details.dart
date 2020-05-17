@@ -1,11 +1,13 @@
+import 'package:amap_location/amap_location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:smartpipenetwork/models/disease_report_network_query.dart';
+import 'package:smartpipenetwork/models/disease_way_model_entity_entity.dart';
 import 'package:smartpipenetwork/models/undone_task_model_entity.dart';
 import 'disease_report.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tableview/tableview.dart';
 import 'package:smartpipenetwork/base_commons/base_network.dart';
-
 
 /// 巡查任务未完成详情页面
 class PatrolTaskDetailsPage extends StatefulWidget {
@@ -24,27 +26,65 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
   String startTitle;
   String startTime;
 
+  String wyaName = '';
+  String locationString;
+
+  /// 获取道路名字
+  _getDiseaseWayModel() async {
+    DiseaseWayModelEntityEntity tempModel = await DiseaseReportNetWorkQuery.diseaseWay(widget.modelResult.id);
+    setState(() {
+
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    // 判断状态显示标题
+    if (widget.modelResult.status == 0) {
+      startTitle = '开始巡查';
+    } else if (widget.modelResult.status == 2) {
+      startTitle = '正在巡查';
+    } else if (widget.modelResult.status == 3) {
+      startTitle = '暂停中';
+    }
     items = [
       '任务名称：${widget.modelResult.plantName}',
-      '周期：无',
+      '周期：${widget.modelResult.taskPeriod}',
       '起始时间：${widget.modelResult.startTime} 至 ${widget.modelResult.endTime}',
       '安排时间：${widget.modelResult.generateTime}',
-      '任务状态：${widget.modelResult.status == 1 ? '进行中' : '未开始'}',
-      '备注：无',
+      '任务状态：$startTitle',
+//      '备注：无',
       '巡查路径'
     ];
-    // 判断状态显示标题
-    if(widget.modelResult.status == 0){
-        startTitle = '开始巡查';
-    }else if(widget.modelResult.status == 2){
-        startTitle = '正在巡查';
-    }else if(widget.modelResult.status == 3){
-        startTitle = '暂停中';
+    _getDiseaseWayModel();
+    _postLocation();
+  }
+
+  Future _postLocation()async{
+    String location = await _getLocation();
+    await DiseaseReportNetWorkQuery.submitLocationPoint(params: {'refTaskId':widget.modelResult.id,'coordinate':location});
+  }
+
+  Future<String> _getLocation() async {
+    //先启动一下
+    await AMapLocationClient.startup(new AMapLocationOption(
+        desiredAccuracy: CLLocationAccuracy.kCLLocationAccuracyHundredMeters));
+    //直接获取定位
+    AMapLocation location = await AMapLocationClient.getLocation(true);
+    if (location != null) {
+      return '${location.longitude},${location.latitude}';
     }
+    return null;
+  }
+
+  @override
+  void reassemble() {
+    // TODO: implement reassemble
+    super.reassemble();
+//    _getDiseaseWayModel();
+  _postLocation();
   }
 
   @override
@@ -58,7 +98,7 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
           centerTitle: true,
           leading: BackButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context, '');
             },
           ),
         ),
@@ -106,11 +146,12 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
   _getBottomButton(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (_isTapStart) {
+        if (startTitle == '正在巡查') {
           // 病害上报路由跳转DiseaseReportPage中需要先声明变量taskNum
           Navigator.of(context).push(MaterialPageRoute(builder: (context) {
             return DiseaseReportPage(
               plantId: widget.modelResult.plantId,
+              wyaName: wyaName,
             );
           }));
         }
@@ -124,7 +165,7 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
           style: TextStyle(color: Colors.white, fontSize: 18),
         ),
         decoration: BoxDecoration(
-            color: _isTapStart ? Colors.blue : Colors.grey,
+            color: startTitle == '正在巡查' ? Colors.blue : Colors.grey,
             border: Border.all(color: Colors.white, width: 1),
             borderRadius: BorderRadius.circular(10)),
       ),
@@ -181,18 +222,18 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
       padding: EdgeInsets.only(top: 10, bottom: 10),
       child: GestureDetector(
         onTap: () async {
-          bool isSuccess = await HTTPQuerery.startOrEnd(widget.modelResult.id,
-              {'status': _isTapStart?3:2});
           setState(() {
             _isTapStart = !_isTapStart;
-            if(startTitle == '开始巡查'){
+            if (startTitle == '开始巡查') {
               startTitle = '正在巡查';
-            }else if( startTitle == '正在巡查'){
+            } else if (startTitle == '正在巡查') {
               startTitle = '暂停中';
-            }else if( startTitle == '暂停中'){
+            } else if (startTitle == '暂停中') {
               startTitle = '正在巡查';
             }
           });
+          bool isSuccess = await HTTPQuerery.startOrEnd(
+              widget.modelResult.id, {'status': _getStatues()});
         },
         child: Container(
           width: 100,
@@ -204,7 +245,7 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
           ),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-              color: startTitle == '正在巡查'? Colors.grey:Colors.lightBlue,
+              color: startTitle == '正在巡查' ? Colors.grey : Colors.lightBlue,
               border: Border.all(color: Colors.white, width: 1),
               borderRadius: BorderRadius.circular(8)),
         ),
@@ -212,15 +253,25 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
     );
   }
 
+  _getStatues() {
+    if (startTitle == '正在巡查') {
+      return 2;
+    }
+    if (startTitle == '暂停中') {
+      return 3;
+    } else {
+      return 0;
+    }
+  }
 
   _getEndButton(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(top: 10, bottom: 10),
       child: GestureDetector(
         onTap: () async {
-          bool isSuccess = await HTTPQuerery.startOrEnd(widget.modelResult.id,
-              {'status': 1});
-          if(isSuccess){
+          bool isSuccess = await HTTPQuerery.startOrEnd(
+              widget.modelResult.id, {'status': 1});
+          if (isSuccess) {
             Navigator.pop(context);
           }
         },

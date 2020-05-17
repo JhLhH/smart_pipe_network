@@ -24,24 +24,24 @@ class _DiseaseDetailsPageState extends State<DiseaseDetailsPage> {
   @override
   void initState() {
     super.initState();
-    _getDetails();
+//    _getDetails();
   }
 
-  _getDetails() async {
-    DescribeDetailEntity tempModel =
-    await TaskNetWorkQuery.describeDetail({'id': widget.diseaseId});
-    DetailesImagesEntity imagesEntity =
-    await TaskNetWorkQuery.describeDetailImages(
-        {'refBizId': widget.diseaseId});
-    setState(() {
-      model = tempModel;
-      imagesEntity.result.forEach((res) {
-        if (res.url.isNotEmpty) {
-          images.add(res.url);
-        }
-      });
-    });
-  }
+//  _getDetails() async {
+//    DescribeDetailEntity tempModel =
+//    await TaskNetWorkQuery.describeDetail({'id': widget.diseaseId});
+//    DetailesImagesEntity imagesEntity =
+//    await TaskNetWorkQuery.describeDetailImages(
+//        {'refBizId': widget.diseaseId});
+//    setState(() {
+//      model = tempModel;
+//      imagesEntity.result.forEach((res) {
+//        if (res.url.isNotEmpty) {
+//          images.add(res.url);
+//        }
+//      });
+//    });
+//  }
 
   @override
   Widget build(BuildContext context) {

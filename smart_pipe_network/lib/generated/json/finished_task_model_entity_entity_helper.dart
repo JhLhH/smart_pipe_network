@@ -69,6 +69,9 @@ finishedTaskModelEntityResultFromJson(FinishedTaskModelEntityResult data, Map<St
 	if (json['plantName'] != null) {
 		data.plantName = json['plantName']?.toString();
 	}
+	if (json['taskPeriod'] != null) {
+		data.taskPeriod = json['taskPeriod']?.toString();
+	}
 	if (json['track'] != null) {
 		data.track = json['track'];
 	}
@@ -91,6 +94,7 @@ Map<String, dynamic> finishedTaskModelEntityResultToJson(FinishedTaskModelEntity
 	data['memo'] = entity.memo;
 	data['rummagerName'] = entity.rummagerName;
 	data['plantName'] = entity.plantName;
+	data['taskPeriod'] = entity.taskPeriod;
 	data['track'] = entity.track;
 	return data;
 }

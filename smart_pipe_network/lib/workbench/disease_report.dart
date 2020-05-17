@@ -12,9 +12,9 @@ import 'package:smartpipenetwork/customwidget/photos_gridview.dart';
 class DiseaseReportPage extends StatefulWidget {
   // 导航栏标题传入上个界面传入
   final String plantId;
-
+  final String wyaName;
   // 构造方法必须写，在_DiseaseReportPageState中使用方式widget.taskNum
-  DiseaseReportPage({this.plantId});
+  DiseaseReportPage({this.plantId, this.wyaName});
 
   @override
   _DiseaseReportPageState createState() => _DiseaseReportPageState();
@@ -95,6 +95,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
   @override
   void initState() {
     super.initState();
+    inputHeaderValueMaps.addAll({'巡查路段：':widget.wyaName});
     _getDiseaseWayModel();
   }
 
@@ -332,6 +333,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     List<Widget> items = [];
     for (int i = 0; i < headerPrefixTitles.length; i++) {
       items.add(CustomTextField(
+//        enabled: i == 1 ? false:true,
         hintText: headerHintTexts[i],
         defaultText: inputHeaderValueMaps.keys.contains(headerPrefixTitles[i])
             ? inputHeaderValueMaps[headerPrefixTitles[i]]
@@ -386,96 +388,55 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
   /// 网络请求模块
 
   _submitDisease() async {
-    // 获取道路id
-    String wayName = inputHeaderValueMaps['巡查路段：'];
-    String wayId;
-    for (int i = 0; i < model.result.length; i++) {
-      DiseaseWayModelEntityResult res = model.result[i];
-      if (res.name == wayName) {
-        wayId = res.id;
-        break;
-      }
-    }
+    // 获取参数
     Map<String, dynamic> params = {
+      'wyaName': inputHeaderValueMaps['巡查路段：'],
+      'memo': ' ',
       'discoveryTime': inputHeaderValueMaps['发现时间：'],
-      'wayId': wayId,
-      'memo': ' '
+      'describes': _getDescribesParams()
     };
     String tempId = await DiseaseReportNetWorkQuery.disease(params: params);
-    setState(() {
-      _diseaseId = tempId;
-    });
+
     print('返回的病害id:$_diseaseId');
     // 获取到id请求病害详情接口
     if (tempId.isNotEmpty) {
-      // 获取到id去根据病害描述总数调用对用次数的接口
-      int successCount = 0; // 调用成功次数
-      int failCount = 0; // 调用失败次数
-      for (int i = 0; i < _sectionCount; i++) {
-        Map<String, String> tempMap = sectionMaps[i];
-        Map<String, List<String>> imgMap;
-        if (sectionImgMaps.keys.length > 0) {
-          imgMap = sectionImgMaps[i];
-        }
-        bool isSuccess = await _submitDescribe(tempId, tempMap,
-            imgMaps: imgMap != null ? imgMap : null);
-        if (isSuccess) {
-          successCount++;
-        } else {
-          failCount++;
-          Fluttertoast.showToast(msg: '第$i组病害描述上传失败');
-        }
-      }
+      Fluttertoast.showToast(msg: '提交成功');
+      Future.delayed(Duration(seconds: 2), () {
+        Navigator.pop(context);
+      });
+    }
+  }
 
-      if (successCount == _sectionCount) {
-        Fluttertoast.showToast(msg: '提交成功');
-        Future.delayed(Duration(seconds: 2), () {
-          Navigator.pop(context);
+  /// 获取病害描述的上传参数
+  List<Map<String, dynamic>> _getDescribesParams() {
+    List<Map<String, dynamic>> describes = [];
+    // 生成病害描述数组
+    for (int i = 0; i < _sectionCount; i++) {
+      Map<String, String> tempMap = sectionMaps[i];
+      String imgIds = '';
+      if (sectionImgMaps.keys.length > 0) {
+        Map<String, List<String>> imgMaps;
+        imgMaps = sectionImgMaps[i];
+        List<String> imageIds = imgMaps['上传图片'];
+        // 拼接图片id
+        imageIds.forEach((value) {
+          if (imgIds == '') {
+            imgIds = '$value';
+          } else {
+            imgIds = '$imgIds,$value';
+          }
         });
       }
+      Map<String, dynamic> item = {
+        'type': tempMap['病害种类：'],
+        'number': num.parse(tempMap['病害数量：']),
+        'address': tempMap['病害位置：'],
+        'reasonAnalysis': tempMap['原因分析：'],
+        'renovationMeasures': tempMap['整修措施：'],
+        'imgIds': imgIds
+      };
+      describes.add(item);
     }
-  }
-
-  _submitDescribe(String diseaseId, Map<String, String> describeMap,
-      {Map<String, List<String>> imgMaps}) async {
-    Map<String, dynamic> params = {
-      'refDisease': diseaseId, // 病害关联ID
-      'type': describeMap['病害种类：'],
-      'number': num.parse(describeMap['病害数量：']),
-      'address': describeMap['病害位置：'],
-      'reasonAnalysis': describeMap['原因分析：'],
-      'renovationMeasures': describeMap['整修措施：'],
-      'memo': ' ',
-    };
-    // 上传病害描述
-    String describeId =
-        await DiseaseReportNetWorkQuery.diseaseDescribe(params: params);
-    if (describeId.isNotEmpty) {
-      if (imgMaps == null) {
-        return true;
-      } else {
-        bool result = await _submitDescribeImg(describeId, imgMaps);
-        return result;
-      }
-    }
-    return false;
-  }
-
-  _submitDescribeImg(
-      String describeId, Map<String, List<String>> imgMaps) async {
-    // 获取图片id
-    List<String> imageIds = imgMaps['上传图片'];
-    // 拼接图片id
-    String ids = '';
-    imageIds.forEach((value) {
-      if (ids == '') {
-        ids = '$value';
-      } else {
-        ids = '$ids,$value';
-      }
-    });
-    bool result =
-        await HTTPQuerery.upDateImage({'refBizId': describeId, 'ids': ids});
-    return result;
+    return describes;
   }
 }

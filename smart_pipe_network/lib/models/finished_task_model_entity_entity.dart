@@ -21,5 +21,6 @@ class FinishedTaskModelEntityResult with JsonConvert<FinishedTaskModelEntityResu
 	String memo;
 	List<String> rummagerName;
 	String plantName;
+	String taskPeriod;
 	dynamic track;
 }
