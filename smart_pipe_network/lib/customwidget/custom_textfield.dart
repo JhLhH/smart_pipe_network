@@ -120,7 +120,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       child: TextFormField(
         controller: controller,
         enabled:
-            widget.suffixIconStyle == SuffixIconStyle.normal ? true : false,
+            widget.suffixIconStyle == SuffixIconStyle.normal ? widget.enabled : false,
         textAlign:
             controller.text.length == 0 ? TextAlign.right : TextAlign.left,
         decoration: InputDecoration(

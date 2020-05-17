@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:amap_location/amap_location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,11 +31,13 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
   String wyaName = '';
   String locationString;
 
+  Timer timer;// 声明一个定时器
+
   /// 获取道路名字
   _getDiseaseWayModel() async {
-    DiseaseWayModelEntityEntity tempModel = await DiseaseReportNetWorkQuery.diseaseWay(widget.modelResult.id);
+    String wyaString = await DiseaseReportNetWorkQuery.diseaseWay(widget.modelResult.id);
     setState(() {
-
+        wyaName = wyaString;
     });
   }
 
@@ -58,9 +62,14 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
 //      '备注：无',
       '巡查路径'
     ];
-//    _getDiseaseWayModel();
-//    _postLocation();
+    _getDiseaseWayModel();
+    _postLocation();
+    // 60秒执行一次
+    timer = Timer.periodic(Duration(seconds: 60), (timer) {
+      _postLocation();
+    });
   }
+
 
   Future _postLocation()async{
     String location = await _getLocation();
@@ -80,10 +89,16 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
   }
 
   @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   void reassemble() {
     // TODO: implement reassemble
     super.reassemble();
-//    _getDiseaseWayModel();
+    _getDiseaseWayModel();
   _postLocation();
   }
 

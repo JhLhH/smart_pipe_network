@@ -40,13 +40,14 @@ class DiseaseReportNetWorkQuery {
 //  }
 
   /// 获取道路信息
-  static Future diseaseWay(String plantId) async {
+  static Future<String> diseaseWay(String plantId) async {
     var data = await HTTPQuerery.get(diseaseWayUrl + plantId);
     try {
       // 解析json数据
-      DiseaseWayModelEntityEntity model = diseaseWayModelEntityEntityFromJson(DiseaseWayModelEntityEntity(),jsonDecode(data));
+    Map<String, dynamic> respones = json.decode(data);
+    String wyaName = respones['result'];
       // 返回道路信息
-      return model;
+      return wyaName;
     } catch (error) {
       print('error------$error------');
       Fluttertoast.showToast(msg: '道路数据获取失败');
@@ -70,17 +71,17 @@ class DiseaseReportNetWorkQuery {
   }
 
   /// 巡查任务时上报坐标点
-  static Future submitLocationPoint({Map<String, dynamic>params}) async {
+  static Future<bool> submitLocationPoint({Map<String, dynamic>params}) async {
     var data = await HTTPQuerery.post(trajectoryUrl,params: params);
     try {
       // 解析json数据
       Map<String,dynamic> response = json.decode(data);
-      Map<String,dynamic> result = response['result'];
+      bool result = response['result'];
       // 返回病害id
-      return result['id'];
+      return result;
     } catch (error) {
       print('error------$error------');
-      Fluttertoast.showToast(msg: '上传数据出错');
+      Fluttertoast.showToast(msg: '位置上传出错${error.toString()}');
       return null;
     }
   }

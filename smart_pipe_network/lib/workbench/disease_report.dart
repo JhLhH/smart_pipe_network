@@ -50,17 +50,6 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
   Map<int, Map<String, String>> locationMaps = {};
   Map<int, Map<String, List<String>>> sectionImgMaps = {};
 
-  _getDiseaseWayModel() async {
-    DiseaseWayModelEntityEntity tempModel =
-        await DiseaseReportNetWorkQuery.diseaseWay('');
-    setState(() {
-      model = tempModel;
-      tempModel.result.forEach((res) {
-        ways.add(res.name);
-      });
-    });
-  }
-
   /// 头部数据
   List<String> headerHintTexts = [
     '请选择时间',
@@ -96,7 +85,6 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
   void initState() {
     super.initState();
     inputHeaderValueMaps.addAll({'巡查路段：':widget.wyaName});
-    _getDiseaseWayModel();
   }
 
   @override
@@ -333,15 +321,15 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     List<Widget> items = [];
     for (int i = 0; i < headerPrefixTitles.length; i++) {
       items.add(CustomTextField(
-//        enabled: i == 1 ? false:true,
+        enabled: i == 1 ? false:true,
         hintText: headerHintTexts[i],
         defaultText: inputHeaderValueMaps.keys.contains(headerPrefixTitles[i])
             ? inputHeaderValueMaps[headerPrefixTitles[i]]
             : null,
         prefixText: headerPrefixTitles[i],
         suffixIconStyle:
-            i == 0 ? SuffixIconStyle.date : SuffixIconStyle.dropdown,
-        dropdownDataSources: i == 1 ? ways : [],
+            i == 0 ? SuffixIconStyle.date : SuffixIconStyle.normal,
+//        dropdownDataSources: i == 1 ? ways : [],
         customTextFieldOnChanged: (prefixText, value) {
           // 如果key值存在就去更新value值，不存在就去创建字典并添加
           if (inputHeaderValueMaps.keys.contains(headerHintTexts[i])) {
