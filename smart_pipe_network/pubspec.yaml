@@ -19,36 +19,37 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # 网络请求库
+  # ????
   dio: ^3.0.4
   fluttertoast: ^4.0.1
   date_format: ^1.0.8
-  # 加载网络图片并缓存
+  # ????
   cached_network_image: ^2.0.0
-  # 图片选择
+  # ????
   image_picker: ^0.6.4
-  # 下拉菜单
+  # ????
   dropdown_menu: ^1.1.1
-  # 本地存储
+  # ????
   shared_preferences: ^0.5.6+3
-  #webview请求
+  #webview
   flutter_webview_plugin: ^0.3.10+1
-
+  #????
+  location_permissions: ^2.0.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
-  # 屏幕适配
+  # UI??
   flutter_screenutil: ^1.1.0
-  # 获取权限
+  # ????
   permission_handler: ^4.4.0
-  # 高德定位
+  # ????
   amap_location: ^0.2.0
-  # 地理坐标转码
+  # ??????
   amap_search_fluttify: ^0.8.2+1
 
   easy_alert: ^0.0.8
 
-  # 自定义组件用于病害上报界面
+  # ?????????????
   tableview:
     git:
       url: https://github.com/wya-team/flutter_wya.git

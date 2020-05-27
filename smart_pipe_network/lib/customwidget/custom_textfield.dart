@@ -159,8 +159,23 @@ class _CustomTextFieldState extends State<CustomTextField> {
       return CustomDropdownButton(
           dataSources: widget.dropdownDataSources,
           onChanged: (value) {
+            String text ;
+            // 判断是整修措施需要
+            if(widget.prefixText == '整修措施：'){
+              if(widget.defaultText != null){
+                if(widget.defaultText.contains(value)){
+                  text = widget.defaultText;
+                }else {
+                  text = widget.defaultText + ',$value';
+                }
+              }else{
+                text = value;
+              }
+            }else{
+              text = value;
+            }
             setState(() {
-              controller.text = value;
+              controller.text = text;
             });
           });
     }

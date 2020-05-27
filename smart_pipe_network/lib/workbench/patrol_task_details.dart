@@ -10,6 +10,8 @@ import 'disease_report.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tableview/tableview.dart';
 import 'package:smartpipenetwork/base_commons/base_network.dart';
+import 'package:smartpipenetwork/process_examine/process_exmine.dart';
+import 'package:smartpipenetwork/base_commons/base_shared_preferences.dart';
 
 /// 巡查任务未完成详情页面
 class PatrolTaskDetailsPage extends StatefulWidget {
@@ -44,6 +46,8 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
   @override
   void initState() {
     // TODO: implement initState
+    _getToken();
+
     super.initState();
     // 判断状态显示标题
     if (widget.modelResult.status == 0) {
@@ -87,7 +91,14 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
     }
     return null;
   }
+  String tokenStr;
 
+  _getToken() async {
+    var tempToken = await ShardPreferences.localGet('token');
+    setState(()  {
+      tokenStr = tempToken;
+    });
+  }
   @override
   void dispose() {
     timer?.cancel();
@@ -194,6 +205,8 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
       return GestureDetector(
         onTap: () {
           print('巡查路径点击');
+          _pushParameterWidgetPage(
+              context, 'http://117.159.24.4:30445/roadMap/index.html?id=${widget.modelResult.rummagerId}&status=0&token=$tokenStr#/', '轨迹查看');
           Fluttertoast.showToast(msg: '巡查路径点击');
         },
         child: Container(
@@ -319,5 +332,11 @@ class _PatrolTaskDetailsPageState extends State<PatrolTaskDetailsPage> {
         style: TextStyle(color: color),
       ),
     );
+  }
+  /// push出一个包含参数的widget
+  _pushParameterWidgetPage(BuildContext context, String url, String title) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ProcessExaminePage(url: url, title: title);
+    }));
   }
 }

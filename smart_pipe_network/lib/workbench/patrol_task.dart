@@ -4,6 +4,8 @@ import 'package:smartpipenetwork/models/task_network_query.dart';
 import 'package:smartpipenetwork/models/undone_task_model_entity.dart';
 import 'package:smartpipenetwork/workbench/disease_report_details.dart';
 import 'package:smartpipenetwork/workbench/patrol_task_details.dart';
+import 'package:smartpipenetwork/process_examine/process_exmine.dart';
+import 'package:smartpipenetwork/base_commons/base_shared_preferences.dart';
 
 /// 巡查任务
 class PatrolTaskPage extends StatefulWidget {
@@ -41,8 +43,17 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
   void initState() {
     super.initState();
     _getTaskDataSources();
-  }
+    _getToken();
 
+  }
+  String tokenStr;
+
+  _getToken() async {
+    var tempToken = await ShardPreferences.localGet('token');
+    setState(()  {
+      tokenStr = tempToken;
+    });
+  }
   @override
   void dispose() {
     _tabController.dispose();
@@ -165,6 +176,8 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
 
   /// 获取已完成每一个items
   Widget _getFinishedWidgets(FinishedTaskModelEntityResult model) {
+    _getToken();
+
     List<String> item = [
       model.name,
       '周期：${model.taskPeriod}',
@@ -206,7 +219,7 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
           margin: EdgeInsets.only(right: 20),
           child: Column(
             children: [
-              _getFinishedRightButton(0, '轨迹查看', Icons.share),
+              _getFinishedRightButton(0, '轨迹查看', Icons.share,model.rummagerId),
 //              Padding(
 //                padding: EdgeInsets.only(top: 10),
 //                child: _getFinishedRightButton(1, '病害详情', Icons.business),
@@ -224,10 +237,12 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
   /// title 按钮标题
   /// icon图标
   /// 后续可能需要传入一个点击到下个页面请求用到的参数，参数名和类型目前无法确定
-  _getFinishedRightButton(int index, String title, IconData icon) {
+  _getFinishedRightButton(int index, String title, IconData icon,String idStr) {
     return GestureDetector(
       onTap: () {
         if (index == 0) {
+          _pushParameterWidgetPage(
+              context, 'http://117.159.24.4:30445/roadMap/index.html?id=$idStr&status=0&token=$tokenStr#/', '轨迹查看');          // 轨迹查看
           // 轨迹查看
         } else if (index == 1) {
           // 病害详情
@@ -242,5 +257,11 @@ class _PatrolTaskPageState extends State<PatrolTaskPage>
         children: [Icon(icon), Text(title)],
       ),
     );
+  }
+  /// push出一个包含参数的widget
+  _pushParameterWidgetPage(BuildContext context, String url, String title) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ProcessExaminePage(url: url, title: title);
+    }));
   }
 }

@@ -29,6 +29,25 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
 
   DiseaseWayModelEntityEntity model;
   List<String> ways = [];
+  //病因分析
+  List<String> analysiss = [
+    '人为造成',
+    '自然磨损',
+    '前期施工缺陷'
+  ];
+  //整修措施
+  List<String> measuress = [
+    '灌缝',
+    '修复面层',
+    '修复基层',
+    '素土回填',
+    '混凝土回填',
+    '更换井盖',
+    '整修井周',
+    '更换平石',
+    '更换侧石',
+    '侧石复位'
+  ];
   List<String> diseaseType = [
     '沥青路面破损、缺失（m²）',
     '沥青路面裂痕（m）',
@@ -202,7 +221,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
             defaultText: _getCellDefaultText(context, section, row),
             prefixText: prefixTitles[row],
             suffixIconStyle: _getSuffixIconStyle(row),
-            dropdownDataSources: row == 0 ? diseaseType : [],
+            dropdownDataSources: _getDropdownDataSources(row),
             customTextFieldOnChanged: (prefixText, value) {
               // 是否包含该key值，使用section分组来标识唯一的分组值
               // 若包含该key值就去更新，不存在就去新建
@@ -256,9 +275,22 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
           );
   }
 
+  _getDropdownDataSources(int row){
+    if(row == 0) {
+      return diseaseType;
+    }
+    if (row == 3) {
+      return analysiss;
+    }
+    if(row == 4){
+      return measuress;
+    }
+    return [''];
+  }
+
   /// 获取输入框的样式
   _getSuffixIconStyle(int row) {
-    if (row == 0) {
+    if (row == 0 || row == 3 || row == 4) {
       return SuffixIconStyle.dropdown;
     }
     if (row == 2) {
@@ -266,6 +298,7 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
     }
     return SuffixIconStyle.normal;
   }
+
 
   /// 获取上传图片的widget
   _getAddPhotoWidget(int section) {
@@ -383,11 +416,11 @@ class _DiseaseReportPageState extends State<DiseaseReportPage> {
       'discoveryTime': inputHeaderValueMaps['发现时间：'],
       'describes': _getDescribesParams()
     };
-    String tempId = await DiseaseReportNetWorkQuery.disease(params: params);
+    bool isSuccess = await DiseaseReportNetWorkQuery.disease(params: params);
 
     print('返回的病害id:$_diseaseId');
     // 获取到id请求病害详情接口
-    if (tempId.isNotEmpty) {
+    if (isSuccess) {
       Fluttertoast.showToast(msg: '提交成功');
       Future.delayed(Duration(seconds: 2), () {
         Navigator.pop(context);

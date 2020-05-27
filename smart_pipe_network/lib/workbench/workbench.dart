@@ -23,6 +23,7 @@ class _WorkBenchPageState extends State<WorkBenchPage> {
 Map<String,AssetImage> data = {
   '巡查任务': AssetImage('images/xunjian@2x.png'),
   '病害工单': AssetImage('images/binghai@2x.png'),
+  '临时病害上报': AssetImage('images/binghai@2x.png'),
   '流程审批': AssetImage('images/liucheng@2x.png'),
   '汛情巡查': AssetImage('images/xuncha@2x.png'),
   '汛情上报': AssetImage('images/shangbao@2x.png'),
@@ -34,6 +35,7 @@ Map<String,AssetImage> data = {
   Map<String, String> routeNames = {
     '巡查任务': 'patrolTask',
     '病害工单': 'ProcessExamine',
+    '临时病害上报': 'temporaryDisease',
     '流程审批': 'ProcessExamine',
     '汛情巡查': 'ProcessExamine',
     '汛情上报': 'ProcessExamine',

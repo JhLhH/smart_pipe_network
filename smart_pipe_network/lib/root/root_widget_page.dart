@@ -9,7 +9,7 @@ import 'package:smartpipenetwork/workbench/patrol_task_details.dart';
 import 'package:smartpipenetwork/workbench/disease_report.dart';
 import 'package:smartpipenetwork/workbench/disease_report_details.dart';
 import 'package:smartpipenetwork/login/login.dart';
-
+import 'package:smartpipenetwork/workbench/temporary_disease.dart';
 
 class RootWidgetPage extends StatefulWidget {
   final LoginModelEntity loginModelEntity;
@@ -42,6 +42,7 @@ class _RootWidgetPageState extends State<RootWidgetPage> {
     'DiseaseReportPage': (context) => DiseaseReportPage(),
     'DiseaseDetailsPage':(context) => DiseaseDetailsPage(),
     'LoginPage':(context) => LoginPage(),
+    'temporaryDisease':(context) => TemporaryDisease(),
   };// 这里没写路由
 
   changeIndex(int index) {

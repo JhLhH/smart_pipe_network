@@ -67,6 +67,9 @@ class _GridViewPageState extends State<GridViewPage> {
           } else if (title == '病害查看') {
             _pushParameterWidgetPage(context,
                 'http://117.159.24.4:30082/deseaseList/index.html#/', title);
+          } else if (title == '临时病害上报') {
+            Navigator.pushNamed(context, widget.routeNames[title]);
+
           } else {
             Navigator.pushNamed(context, widget.routeNames[title]);
           }

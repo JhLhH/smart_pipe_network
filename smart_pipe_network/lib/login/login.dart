@@ -214,6 +214,7 @@ class _LoginPageState extends State<LoginPage> {
                 password = value;
               });
             },
+            obscureText: true,
             style: TextStyle(
                 fontSize: 15.0,
                 color: Colors.white,
