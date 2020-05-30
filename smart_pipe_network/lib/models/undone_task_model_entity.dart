@@ -21,7 +21,7 @@ class UndoneTaskModelResult with JsonConvert<UndoneTaskModelResult> {
 	dynamic realEndTime;
 	String memo;
 	String taskPeriod;
-	List<String> rummagerName;
+	String rummagerName;
 	String plantName;
 	dynamic track;
 }

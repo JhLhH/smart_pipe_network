@@ -19,7 +19,7 @@ class FinishedTaskModelEntityResult with JsonConvert<FinishedTaskModelEntityResu
 	dynamic realStartTime;
 	dynamic realEndTime;
 	String memo;
-	List<String> rummagerName;
+	String rummagerName;
 	String plantName;
 	String taskPeriod;
 	dynamic track;

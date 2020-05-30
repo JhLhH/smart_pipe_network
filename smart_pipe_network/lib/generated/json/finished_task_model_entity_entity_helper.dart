@@ -64,7 +64,7 @@ finishedTaskModelEntityResultFromJson(FinishedTaskModelEntityResult data, Map<St
 		data.memo = json['memo']?.toString();
 	}
 	if (json['rummagerName'] != null) {
-		data.rummagerName = json['rummagerName']?.map((v) => v?.toString())?.toList()?.cast<String>();
+		data.rummagerName = json['rummagerName']?.toString();
 	}
 	if (json['plantName'] != null) {
 		data.plantName = json['plantName']?.toString();
